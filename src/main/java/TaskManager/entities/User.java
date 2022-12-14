@@ -1,12 +1,13 @@
 package TaskManager.entities;
 
+import TaskManager.entities.entitiesUtils.UserRole;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.util.Objects;
+
 
 @Entity
 @NoArgsConstructor
@@ -22,5 +23,14 @@ public class User{
     @Column(unique = true)
     private String email;
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+
+    public User(String email ,String password){
+        this.email =email;
+        this.password= password;
+    }
+
 
 }
