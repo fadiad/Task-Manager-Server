@@ -1,4 +1,4 @@
-package chatApp.entities;
+package TaskManager.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

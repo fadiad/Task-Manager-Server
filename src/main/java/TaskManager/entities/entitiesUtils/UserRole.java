@@ -1,7 +1,7 @@
-package chatApp.entities.entitiesUtils;
+package TaskManager.entities.entitiesUtils;
 
 public enum UserRole {
-    ADMIN,
-    USER,
-    LEADER
+    ROLE_ADMIN,
+    ROLE_USER,
+    ROLE_LEADER
 }
