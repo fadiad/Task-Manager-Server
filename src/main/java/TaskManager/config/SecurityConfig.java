@@ -31,7 +31,6 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authManager() {
-        System.out.println("hi to u");
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
         authenticationProvider.setUserDetailsService(myUserDetailsService);
