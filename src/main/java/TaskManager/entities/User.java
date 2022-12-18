@@ -1,12 +1,12 @@
 package TaskManager.entities;
 
 import TaskManager.entities.entitiesUtils.UserRole;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.util.Set;
 
 
 @Entity
@@ -27,10 +27,24 @@ public class User{
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    public User(String email ,String password){
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_board",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "board_id"))
+    private Set<Board> boards;
+
+    public User(String email ,String password,UserRole userRole){
         this.email =email;
         this.password= password;
+        this.userRole=userRole;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
 }
