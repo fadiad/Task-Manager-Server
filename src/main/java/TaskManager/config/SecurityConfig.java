@@ -1,6 +1,8 @@
 package TaskManager.config;
 
 
+import TaskManager.utils.jwtUtils.JWTAuthenticationFilter;
+import TaskManager.utils.jwtUtils.JWTTokenHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +16,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -28,10 +32,13 @@ public class SecurityConfig {
     private final UserDetailsService myUserDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private final JWTTokenHelper jWTTokenHelper;
+
+
+    private  final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public AuthenticationManager authManager() {
-        System.out.println("hi to u");
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
         authenticationProvider.setUserDetailsService(myUserDetailsService);
@@ -41,10 +48,11 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests().anyRequest().permitAll();
-       // http.authorizeRequests((request)->request.antMatchers("/auth/**").permitAll().
-                       // antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated());
+        http.sessionManagement().sessionCreationPolicy(STATELESS).and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).and()
+                .authorizeRequests((request) -> request.antMatchers( "/auth/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated())
+                .addFilterBefore(new JWTAuthenticationFilter(myUserDetailsService, jWTTokenHelper), UsernamePasswordAuthenticationFilter.class);
+
         http.csrf().disable().cors().and().headers().frameOptions().disable();
         return http.build();
     }
