@@ -39,19 +39,17 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     private final JWTTokenHelper jWTTokenHelper;
+    @RequestMapping(method = RequestMethod.GET, path = "/allDetails")
+    public ResponseEntity<GitUser> OAuth2Request(@RequestParam String code) {
+        //TODO: CHECK IF THIS ID THE FIRST TIME THE USER LOGIN THE APPLICATION OR NOT.
+        String result = getTokenFromCode(code);
+        GitUser gitUser = getDetailsFromToken(result).getBody();
+        if(gitUser.getEmail().)
 
-    //TODO: localhost:8080/auth/getDetails
-    //TODO: CHECK'S
-    //TODO: CHECK IF THIS ID THE FIRST TIME THE USER LOGIN THE APPLICATION OR NOT.
-    //TODO: found the email + name of the user
-
-
+    }
 
     @RequestMapping(method = RequestMethod.POST, path = "/getToken")
     public String getTokenFromCode(@RequestParam String code) {
-
-        //TODO: the first request from the frontend.. (1)
-        //TODO: localhost:8080/auth/getToken?code= (2)
 
         String client_id = "f21614ae68732a9a2cc0";
         String client_secret = "a62b7f0991686edd80a37b4b2aa63411df873fb0";
@@ -74,26 +72,12 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong!!");
         }
     }
+
     @RequestMapping(method = RequestMethod.GET, path = "/getDetails")
     public ResponseEntity<GitUser> getDetailsFromToken(@RequestParam String token) {
 
-        System.out.println(token);
-
         String linkForName = "https://api.github.com/user"; //out from function
-
         return getDetailsFromTokenFunction(linkForName, token);
-
-//        GitUser gitUser = result.getBody();
-//        if(result.getBody().getEmail()==null) {
-//            GithubEmail[] githubEmail = reqFromGitTheEmail("https://api.github.com/user", token).getBody();
-//            for (GithubEmail gEmail: githubEmail) {
-//                if (gEmail.isPrimary()) {
-//                        return null;
-//                }
-//            ResponseEntity<GithubEmail> resultEmail = reqFromGitTheEmail("https://api.github.com/user/emails", token); //get out the name
-//            resultName.getBody().setEmail(resultEmail.getBody().getEmail());
-//            }
-//        }
     }
     public static ResponseEntity<GitUser> getDetailsFromTokenFunction(String link, String bearerToken) {
 
@@ -104,14 +88,14 @@ public class AuthController {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         try {
-//           response=restTemplate.exchange(link, HttpMethod.GET, entity, GitUser.class);
+//          response=restTemplate.exchange(link, HttpMethod.GET, entity, GitUser.class);
             GitUser gitUser = restTemplate.exchange(link, HttpMethod.GET, entity, GitUser.class).getBody();
             System.out.println(gitUser.getName());
             System.out.println(gitUser.getEmail());
 
             return  ResponseEntity.ok(gitUser);
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("error" + e);
         }
         return null;
     }
