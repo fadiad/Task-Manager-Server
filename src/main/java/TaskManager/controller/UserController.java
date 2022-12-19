@@ -1,10 +1,8 @@
 package TaskManager.controller;
 
+import TaskManager.entities.Board;
 import lombok.AllArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 //@CrossOrigin(origins = "http://localhost:3000")
@@ -12,9 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class UserController {
 
+
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')"+"|| hasAuthority('ROLE_USER')")
+    //@PreAuthorize("hasAuthority('ROLE_ADMIN')"+"|| hasAuthority('ROLE_USER')")
     public void onlyAdmin(){
         System.out.println("hi admin");
+    }
+
+    @PostMapping(value = "/board-create", consumes = "application/json", produces = "application/json")
+    public void createBoard(@RequestBody Board board){
+        System.out.println(board);
     }
 }
