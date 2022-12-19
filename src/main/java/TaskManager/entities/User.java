@@ -3,6 +3,7 @@ package TaskManager.entities;
 import TaskManager.entities.entitiesUtils.UserRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Table(name = "user")
 @Transactional
 @Getter
+
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,12 +34,11 @@ public class User{
     @JoinTable(name = "user_board",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "board_id"))
+    @ToString.Exclude
     private Set<Board> boards;
 
-    public User(String email ,String password,UserRole userRole){
-        this.email =email;
-        this.password= password;
-        this.userRole=userRole;
+    public void setBoards(Set<Board> boards) {
+        this.boards = boards;
     }
 
     public void setPassword(String password) {
@@ -47,4 +48,7 @@ public class User{
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
+
+
+
 }

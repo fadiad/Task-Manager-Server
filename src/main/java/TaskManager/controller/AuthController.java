@@ -59,6 +59,7 @@ public class AuthController {
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> create(@RequestBody User user) {
         //TODO we wii add validation here in the near future folks
+        System.out.println(user);
         authService.addUser(user);
         logger.info("New user was added");
         return new ResponseEntity<>("ok", HttpStatus.OK);
