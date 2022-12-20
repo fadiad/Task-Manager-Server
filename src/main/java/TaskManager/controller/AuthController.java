@@ -1,27 +1,34 @@
 package TaskManager.controller;
 
-import TaskManager.entities.LoginData;
-import TaskManager.entities.LoginRequest;
-import TaskManager.entities.SecurityUser;
-import TaskManager.entities.User;
+import TaskManager.entities.*;
 import TaskManager.entities.responseEntities.UserDTO;
 import TaskManager.service.AuthService;
+import TaskManager.service.GitService;
 import TaskManager.utils.emailUtils.EmailActivationFacade;
 import TaskManager.utils.jwtUtils.JWTTokenHelper;
 import lombok.AllArgsConstructor;
+import lombok.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+//import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+
+//import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 
 
 @RestController
@@ -38,6 +45,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     private final JWTTokenHelper jWTTokenHelper;
+
 
     @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
     public ResponseEntity<LoginData> login(@RequestBody LoginRequest credentials) {
@@ -66,7 +74,7 @@ public class AuthController {
     }
 
     @GetMapping
-    public void onlyAdmin(){
+    public void onlyAdmin() {
         System.out.println("hi admin");
 
         emailActivationFacade.sendVerificationEmail("saraysara1996@gmail.com");

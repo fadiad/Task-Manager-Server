@@ -14,10 +14,7 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 public class UserService  {
-
-
     private final BoardRepository boardRepository;
-
     private final Set<ItemTypes> itemTypesSet=new HashSet<>(Arrays.asList(ItemTypes.values()));
     public Board addNewBoard(Board board){
         System.out.println(itemTypesSet);
