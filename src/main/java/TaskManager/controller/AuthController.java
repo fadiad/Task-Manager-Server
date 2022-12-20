@@ -41,44 +41,10 @@ public class AuthController {
     private final EmailActivationFacade emailActivationFacade;
 
     private final AuthService authService;
-    private final GitService gitService;
-
-//    @Value("${github.clientId}")
-//    String client_id;
-//    @Value("${github.client_secret}")
-//    String client_secret;
 
     private final AuthenticationManager authenticationManager;
 
     private final JWTTokenHelper jWTTokenHelper;
-    @RequestMapping(method = RequestMethod.GET, path = "/allDetails")
-    public ResponseEntity<GitUser> OAuth2Request(@RequestParam String code) {
-        String result = getTokenFromCode(code);
-        GitUser gitUser = getDetailsFromToken(result).getBody();
-
-        //if exist on userRepository  return token, else add to DB and return token
-        return getDetailsFromToken(result);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, path = "/getToken")
-    public String getTokenFromCode(@RequestParam String code) {
-
-        String client_id = "enter your client id";
-        String client_secret = "enter your client secret";
-        String Link = "https://github.com/login/oauth/access_token?";
-
-        String linkGetToken = Link + "client_id=" + client_id + "&client_secret=" + client_secret + "&code=" + code;
-        ResponseEntity<TokenResponse> result = gitService.getTokenFromCodeFunction(linkGetToken);
-
-        return result.getBody().getAccess_token();
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/getDetails")
-    public ResponseEntity<GitUser> getDetailsFromToken(@RequestParam String token) {
-
-        String linkForName = "https://api.github.com/user"; //out from function
-        return gitService.getDetailsFromTokenFunction(linkForName, token);
-    }
 
 
     @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")

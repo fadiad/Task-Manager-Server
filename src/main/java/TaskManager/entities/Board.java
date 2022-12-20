@@ -19,7 +19,7 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private String name;
+    private String title;
 
     @ElementCollection
     @Enumerated(EnumType.STRING)
@@ -48,7 +48,7 @@ public class Board {
     public String toString() {
         return "Board{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", itemTypes=" + itemTypes +
                 ", statuses=" + statuses +
                 ", usersRoles=" + usersRoles +

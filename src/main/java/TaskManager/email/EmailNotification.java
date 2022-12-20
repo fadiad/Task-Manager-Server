@@ -24,7 +24,7 @@ public class EmailNotification {
         properties.put("mail.smtp.ssl.enable", "true");
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.socketFactory.fallback", "true");
-        properties.put("spring.mail.password", "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");
+        properties.put("spring.mail.password", "ENTER YOUR PASSWORD");
         session.setDebug(true);
         return new MimeMessage(session);
     }
