@@ -8,6 +8,19 @@ public class GitUser {
 
     private String accessToken;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GitUser gitUser = (GitUser) o;
+        return Objects.equals(name, gitUser.name) && Objects.equals(email, gitUser.email) && Objects.equals(accessToken, gitUser.accessToken) && Objects.equals(login, gitUser.login);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, email, accessToken, login);
+    }
+
     public String getAccessToken() {
         return accessToken;
     }
@@ -61,19 +74,6 @@ public class GitUser {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GitUser gitUser = (GitUser) o;
-        return Objects.equals(name, gitUser.name) && Objects.equals(email, gitUser.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, email);
     }
 
 }

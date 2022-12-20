@@ -44,6 +44,15 @@ public class Board {
     private Set<User> usersOnBoard;
 
 
-
-    
+    @Override
+    public String toString() {
+        return "Board{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", itemTypes=" + itemTypes +
+                ", statuses=" + statuses +
+                ", usersRoles=" + usersRoles +
+                ", usersOnBoard=" + usersOnBoard +
+                '}';
+    }
 }

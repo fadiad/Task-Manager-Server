@@ -3,11 +3,17 @@ package TaskManager.controller;
 import TaskManager.entities.*;
 import TaskManager.entities.responseEntities.UserDTO;
 import TaskManager.service.AuthService;
+import TaskManager.service.GitService;
 import TaskManager.utils.emailUtils.EmailActivationFacade;
 import TaskManager.utils.jwtUtils.JWTTokenHelper;
 import lombok.AllArgsConstructor;
+import lombok.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+
+//import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,69 +41,43 @@ public class AuthController {
     private final EmailActivationFacade emailActivationFacade;
 
     private final AuthService authService;
+    private final GitService gitService;
+
+//    @Value("${github.clientId}")
+//    String client_id;
+//    @Value("${github.client_secret}")
+//    String client_secret;
 
     private final AuthenticationManager authenticationManager;
 
     private final JWTTokenHelper jWTTokenHelper;
     @RequestMapping(method = RequestMethod.GET, path = "/allDetails")
     public ResponseEntity<GitUser> OAuth2Request(@RequestParam String code) {
-        //TODO: CHECK IF THIS ID THE FIRST TIME THE USER LOGIN THE APPLICATION OR NOT.
         String result = getTokenFromCode(code);
         GitUser gitUser = getDetailsFromToken(result).getBody();
-        if(gitUser.getEmail().)
 
+        //if exist on userRepository  return token, else add to DB and return token
+        return getDetailsFromToken(result);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/getToken")
     public String getTokenFromCode(@RequestParam String code) {
 
-        String client_id = "f21614ae68732a9a2cc0";
-        String client_secret = "a62b7f0991686edd80a37b4b2aa63411df873fb0";
+        String client_id = "enter your client id";
+        String client_secret = "enter your client secret";
         String Link = "https://github.com/login/oauth/access_token?";
 
         String linkGetToken = Link + "client_id=" + client_id + "&client_secret=" + client_secret + "&code=" + code;
-        ResponseEntity<TokenResponse> result = getTokenFromCodeFunction(linkGetToken);
+        ResponseEntity<TokenResponse> result = gitService.getTokenFromCodeFunction(linkGetToken);
 
         return result.getBody().getAccess_token();
-    }
-    public static ResponseEntity<TokenResponse> getTokenFromCodeFunction(String link) {  //send link return response
-        ResponseEntity<TokenResponse> response = null;
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        try {
-            return restTemplate.exchange(link, HttpMethod.POST, entity, TokenResponse.class);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong!!");
-        }
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/getDetails")
     public ResponseEntity<GitUser> getDetailsFromToken(@RequestParam String token) {
 
         String linkForName = "https://api.github.com/user"; //out from function
-        return getDetailsFromTokenFunction(linkForName, token);
-    }
-    public static ResponseEntity<GitUser> getDetailsFromTokenFunction(String link, String bearerToken) {
-
-        ResponseEntity<GitUser> response = null;
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + bearerToken);
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-
-        try {
-//          response=restTemplate.exchange(link, HttpMethod.GET, entity, GitUser.class);
-            GitUser gitUser = restTemplate.exchange(link, HttpMethod.GET, entity, GitUser.class).getBody();
-            System.out.println(gitUser.getName());
-            System.out.println(gitUser.getEmail());
-
-            return  ResponseEntity.ok(gitUser);
-        } catch (Exception e) {
-            System.out.println("error" + e);
-        }
-        return null;
+        return gitService.getDetailsFromTokenFunction(linkForName, token);
     }
 
 
@@ -121,6 +101,7 @@ public class AuthController {
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> create(@RequestBody User user) {
         //TODO we wii add validation here in the near future folks
+        System.out.println(user);
         authService.addUser(user);
         logger.info("New user was added");
         return new ResponseEntity<>("ok", HttpStatus.OK);

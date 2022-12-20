@@ -57,9 +57,6 @@ public class JWTTokenHelper {
 	 }
 
 	 public String generateToken(String username) throws InvalidKeySpecException, NoSuchAlgorithmException {
-		 System.out.println(appName);
-		 System.out.println(secretKey);
-		 System.out.println(expiresIn);
 	        return Jwts.builder()
 	                .setIssuer( appName )
 	                .setSubject(username)
