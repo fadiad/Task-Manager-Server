@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
@@ -23,11 +22,14 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
+//    @GetMapping
     //@PreAuthorize("hasAuthority('ROLE_ADMIN')"+"|| hasAuthority('ROLE_USER')")
-    public void onlyAdmin() {
-        System.out.println("hi admin");
-    }
+
+//    public void onlyAdmin(){
+//        userService.getAll();
+//
+//        System.out.println("hi admin");
+//    }
 
 
     @PostMapping(value = "/board-create", consumes = "application/json", produces = "application/json")
@@ -35,12 +37,17 @@ public class UserController {
         Board board1 = userService.addNewBoard(board, userId);
     }
 
-    @RequestMapping(value = "/boards-get", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-boards-by-userId", method = RequestMethod.GET)
     public List<BoardToReturn> getUserByToken1(@RequestParam int userId) {
 //        System.out.println("------boards-get------");
 //        System.out.println(userId);
 //        System.out.println("pring : " + userService.getUserBoards(userId));
         return userService.getUserBoards(userId);
     }
+
+//    @PutMapping(value = "/board-update/{boardId}", consumes = "application/json", produces = "application/json")
+//    public void updateBoard(@PathVariable("boardId") int boardId ,@RequestBody Board updatedBoard){
+//        Board board1 = userService.updateBoard(updatedBoard);
+//    }
 
 }

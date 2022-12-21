@@ -17,10 +17,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserService  {
 
-
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-
     private final Set<ItemTypes> itemTypesSet=new HashSet<>(Arrays.asList(ItemTypes.values()));
 
     public Board addNewBoard(Board board , int userId){
@@ -29,6 +27,7 @@ public class UserService  {
         user.getBoards().add(board);
         return boardRepository.save(board);
     }
+
 
     public List<BoardToReturn> getUserBoards(int userId){
         System.out.println(userId);
@@ -44,7 +43,13 @@ public class UserService  {
         return boardsList ;
     }
 
+//    public Board updateBoard(Board update){
+//
+//        return boardRepository.save(update);
+//    }
 
-
+    public void getAll() {
+        //System.out.println(boardRepository.findAllStatuses());
+    }
 
 }

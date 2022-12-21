@@ -28,9 +28,6 @@ public class Board {
     @Column(name = "ItemTypes", nullable = false)
     private Set<ItemTypes> itemTypes;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TaskStatus> statuses;
-
     @ElementCollection
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "board_users_roles", joinColumns = @JoinColumn(name = "board_id"))
@@ -47,7 +44,6 @@ public class Board {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", itemTypes=" + itemTypes +
-                ", statuses=" + statuses +
                 ", usersRoles=" + usersRoles +
                 ", usersOnBoard=" + usersOnBoard +
                 '}';
