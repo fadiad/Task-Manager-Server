@@ -39,11 +39,9 @@ public class UserController {
 
     @RequestMapping(value = "/get-boards-by-userId", method = RequestMethod.GET)
     public List<BoardToReturn> getUserByToken1(@RequestParam int userId) {
-//        System.out.println("------boards-get------");
-//        System.out.println(userId);
-//        System.out.println("pring : " + userService.getUserBoards(userId));
         return userService.getUserBoards(userId);
     }
+
 
 //    @PutMapping(value = "/board-update/{boardId}", consumes = "application/json", produces = "application/json")
 //    public void updateBoard(@PathVariable("boardId") int boardId ,@RequestBody Board updatedBoard){
