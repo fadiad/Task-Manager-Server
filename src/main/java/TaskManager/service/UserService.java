@@ -15,7 +15,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserService  {
 
-
     private final BoardRepository boardRepository;
 
     private final Set<ItemTypes> itemTypesSet=new HashSet<>(Arrays.asList(ItemTypes.values()));
@@ -23,5 +22,14 @@ public class UserService  {
         System.out.println(itemTypesSet);
 
         return boardRepository.save(board);
+    }
+
+    public Board updateBoard(Board update){
+
+        return boardRepository.save(update);
+    }
+
+    public void getAll() {
+        //System.out.println(boardRepository.findAllStatuses());
     }
 }

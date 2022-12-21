@@ -25,7 +25,6 @@ import java.security.spec.InvalidKeySpecException;
 
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthController {
