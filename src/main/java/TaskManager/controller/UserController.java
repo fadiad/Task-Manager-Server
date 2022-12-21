@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
@@ -21,6 +20,7 @@ public class UserController {
     @GetMapping
     //@PreAuthorize("hasAuthority('ROLE_ADMIN')"+"|| hasAuthority('ROLE_USER')")
     public void onlyAdmin(){
+        userService.getAll();
         System.out.println("hi admin");
     }
 
@@ -30,6 +30,11 @@ public class UserController {
         Board board1 = userService.addNewBoard(board);
         System.out.println(board);
 
+    }
+
+    @PutMapping(value = "/board-update/{boardId}", consumes = "application/json", produces = "application/json")
+    public void updateBoard(@PathVariable("boardId") int boardId ,@RequestBody Board updatedBoard){
+        Board board1 = userService.updateBoard(updatedBoard);
     }
 
 }
