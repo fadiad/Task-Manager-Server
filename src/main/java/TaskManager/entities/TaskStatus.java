@@ -13,9 +13,7 @@ public class TaskStatus {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    private int boardId;
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
 }

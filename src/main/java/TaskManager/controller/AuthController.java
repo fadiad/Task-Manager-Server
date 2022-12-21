@@ -32,7 +32,6 @@ import java.util.Arrays;
 
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthController {

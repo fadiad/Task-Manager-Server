@@ -21,4 +21,13 @@ public class UserService  {
 
         return boardRepository.save(board);
     }
+
+    public Board updateBoard(Board update){
+
+        return boardRepository.save(update);
+    }
+
+    public void getAll() {
+        //System.out.println(boardRepository.findAllStatuses());
+    }
 }
