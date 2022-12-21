@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,10 +35,8 @@ public class Board {
     @Column(name = "user_role")
     private Map<Integer,UserRole> usersRoles;
 
-
     @ManyToMany(mappedBy = "boards", fetch = FetchType.LAZY)
-    private Set<User> usersOnBoard;
-
+    private Set<User> usersOnBoard = new HashSet<>();
 
     @Override
     public String toString() {

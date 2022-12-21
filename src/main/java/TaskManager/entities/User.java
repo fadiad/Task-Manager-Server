@@ -1,15 +1,17 @@
 package TaskManager.entities;
 
 import TaskManager.entities.entitiesUtils.UserRole;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.Set;
 
-
+@AllArgsConstructor
 @Entity
 @NoArgsConstructor
 @Table(name = "user")
@@ -35,7 +37,7 @@ public class User{
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "board_id"))
     @ToString.Exclude
-    private Set<Board> boards;
+    private Set<Board> boards = new HashSet<>();
 
     public void setBoards(Set<Board> boards) {
         this.boards = boards;
@@ -48,7 +50,5 @@ public class User{
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
-
-
 
 }
