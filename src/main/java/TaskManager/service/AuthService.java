@@ -1,6 +1,5 @@
 package TaskManager.service;
 
-import TaskManager.entities.GitUser;
 import TaskManager.entities.SecurityUser;
 import TaskManager.entities.User;
 import TaskManager.entities.entitiesUtils.UserRole;
@@ -39,16 +38,5 @@ public class AuthService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email).map(SecurityUser::new)
                 .orElseThrow(() -> new UsernameNotFoundException("bad credentials"));
-    }
-    public void isExistOrCreate(GitUser gitUser) {
-
-
-
-
-        if(userRepository.findByEmail(gitUser.getEmail()).isPresent()){
-            //TODO: ADD TO LOGIN USERS
-        } else{
-            //TODO: ADD TO USER AND ADD TO LOGIN USERS
-        }
     }
 }

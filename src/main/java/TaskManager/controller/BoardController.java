@@ -1,9 +1,14 @@
 package TaskManager.controller;
 
+import TaskManager.entities.Board;
 import TaskManager.entities.Item;
 import TaskManager.entities.TaskStatus;
 import TaskManager.entities.requests.BoardRequest;
+import TaskManager.entities.responseEntities.BoardDetailsDTO;
+import TaskManager.service.BoardService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,12 +16,24 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class BoardController {
 
+    private final BoardService boardService;
+    @PostMapping(value = "/board-create", consumes = "application/json", produces = "application/json")
+    public void createBoard(@RequestBody Board board){
+        Board board1 = boardService.addNewBoard(board);
+        System.out.println(board);
+    }
+
+    @GetMapping(value = "/{boardId}",produces = "application/json")
+    public ResponseEntity<BoardDetailsDTO> createBoard(@PathVariable("boardId") int boardId){
+        return new ResponseEntity<>(boardService.getBoardById(boardId), HttpStatus.OK);
+    }
+
     @DeleteMapping(value = "/delete-statues", produces = "application/json")
     public Item removeStatuses(@RequestParam int boardId,@RequestParam int statusId){
         return null;
     }
     @PostMapping(value = "/add-statues/{boardId}", consumes = "application/json", produces = "application/json")
-    public Item addNewItem(@PathVariable("boardId") int boardId ,@RequestBody TaskStatus taskStatus){
+    public Item addNewStatusToBoard(@PathVariable("boardId") int boardId ,@RequestBody TaskStatus taskStatus){
         return null;
     }
 

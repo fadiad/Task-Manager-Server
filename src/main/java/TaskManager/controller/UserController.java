@@ -1,9 +1,10 @@
 package TaskManager.controller;
 
-import TaskManager.entities.Board;
 import TaskManager.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
@@ -20,16 +21,9 @@ public class UserController {
         System.out.println("hi admin");
     }
 
-    @PostMapping(value = "/board-create", consumes = "application/json", produces = "application/json")
-    public void createBoard(@RequestBody Board board){
-        Board board1 = userService.addNewBoard(board);
-        System.out.println(board);
-
-    }
-
-    @PutMapping(value = "/board-update/{boardId}", consumes = "application/json", produces = "application/json")
-    public void updateBoard(@PathVariable("boardId") int boardId ,@RequestBody Board updatedBoard){
-        Board board1 = userService.updateBoard(updatedBoard);
-
-    }
+//    @PutMapping(value = "/board-update/{boardId}", consumes = "application/json", produces = "application/json")
+//    public void updateBoard(@PathVariable("boardId") int boardId ,@RequestBody Board updatedBoard){
+//        Board board1 = userService.updateBoard(updatedBoard);
+//
+//    }
 }

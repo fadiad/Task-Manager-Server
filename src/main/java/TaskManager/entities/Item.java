@@ -1,6 +1,7 @@
 package TaskManager.entities;
 
 import TaskManager.entities.entitiesUtils.ItemTypes;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @Table(name = "item")
 @Transactional
 @Getter
+@AllArgsConstructor
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,7 +24,7 @@ public class Item {
     private String Title;
     private String Description;
 
-    private int StatusId;
+    private int statusId;
 
     @Enumerated(EnumType.STRING)//TODO must fadi will test this later or  i will kick his butt
     private ItemTypes itemType;
@@ -50,4 +52,20 @@ public class Item {
     }
 
 
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", boardId=" + boardId +
+                ", Title='" + Title + '\'' +
+                ", Description='" + Description + '\'' +
+                ", StatusId=" + statusId +
+                ", itemType=" + itemType +
+                ", dueDate=" + dueDate +
+                ", parentItem=" + parentItem +
+                ", creator=" + creator +
+                ", assignTo=" + assignTo +
+                ", Importance=" + Importance +
+                '}';
+    }
 }
