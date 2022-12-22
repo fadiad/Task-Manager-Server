@@ -17,7 +17,6 @@ import java.util.Set;
 @Table(name = "user")
 @Transactional
 @Getter
-
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,6 +30,10 @@ public class User{
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    //private Set<NotificationTypes> notificationTypes = new HashSet<>();
+
+    private boolean emailNotification;
+    private boolean popUpNotification;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_board",

@@ -1,4 +1,4 @@
-package TaskManager.controller;
+package TaskManager.entities.responseEntities;
 
 public class TokenResponse {
     private String access_token;

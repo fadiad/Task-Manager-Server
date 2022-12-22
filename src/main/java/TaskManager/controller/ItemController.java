@@ -33,13 +33,12 @@ public class ItemController {
     }
     @DeleteMapping(value = "/item-delete/{itemId}")
     public void deleteItem(@PathVariable("itemId") int itemId){
-
+        itemService.deleteItem(itemId);
     }
 
     @PostMapping(value = "/add-comment/{itemId}")
     public void addComment(@RequestBody Comment comment){
 
     }
-
 
 }

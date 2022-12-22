@@ -30,4 +30,7 @@ public class ItemService {
 
         return new ItemDTO(itemRepository.save(itemToAssign));
     }
+    public void deleteItem(int itemId) {
+        itemRepository.deleteById(itemId);
+    }
 }

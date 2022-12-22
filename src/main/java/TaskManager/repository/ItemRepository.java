@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface ItemRepository extends JpaRepository<Item, Long> {
    List<Item> findByBoardId(int boardId);
    Optional<Item> findById(int itemId);
+   void deleteById(int id);
 }
