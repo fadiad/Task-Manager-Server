@@ -2,6 +2,7 @@ package TaskManager.service;
 
 import TaskManager.entities.Board;
 import TaskManager.entities.Item;
+import TaskManager.entities.TaskStatus;
 import TaskManager.entities.User;
 import TaskManager.entities.entitiesUtils.ItemTypes;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
@@ -13,10 +14,7 @@ import TaskManager.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,5 +49,10 @@ public class BoardService {
         return user.getBoards().stream()
                 .map(BoardToReturn::new)
                 .collect(Collectors.toList());
+    }
+    public void addNewStatusToBoard(int boardId, TaskStatus taskStatus) {
+        Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("board not found"));
+        board.getStatues().add(taskStatus);
+        boardRepository.save(board);
     }
 }

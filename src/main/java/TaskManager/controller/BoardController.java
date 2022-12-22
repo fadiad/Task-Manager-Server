@@ -40,8 +40,8 @@ public class BoardController {
         return null;
     }
     @PostMapping(value = "/add-statues/{boardId}", consumes = "application/json", produces = "application/json")
-    public Item addNewStatusToBoard(@PathVariable("boardId") int boardId ,@RequestBody TaskStatus taskStatus){
-        return null;
+    public void addNewStatusToBoard(@PathVariable("boardId") int boardId ,@RequestBody TaskStatus taskStatus){
+        boardService.addNewStatusToBoard(boardId, taskStatus);
     }
 
     @DeleteMapping(value = "/delete-itemType/{boardId}", consumes = "application/json", produces = "application/json")
