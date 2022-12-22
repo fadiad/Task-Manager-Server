@@ -1,5 +1,4 @@
 package TaskManager.service;
-
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +8,4 @@ import org.springframework.stereotype.Service;
 public class UserService  {
 
 
-    public void getAll() {
-        //System.out.println(boardRepository.findAllStatuses());
-    }
 }
