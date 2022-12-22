@@ -30,4 +30,12 @@ public class ItemService {
 
         return new ItemDTO(itemRepository.save(itemToAssign));
     }
+
+    public ItemDTO updateItem(int itemId, Item updatedItem) {
+        Item oldItem = itemRepository.findById(itemId).orElseThrow(()->new IllegalArgumentException("Item not found"));
+        oldItem.setItem(updatedItem);
+        return new ItemDTO(itemRepository.save(oldItem));
+    }
+
+
 }

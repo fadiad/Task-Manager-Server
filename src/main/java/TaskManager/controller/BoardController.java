@@ -46,6 +46,7 @@ public class BoardController {
 
     @DeleteMapping(value = "/delete-itemType/{boardId}", consumes = "application/json", produces = "application/json")
     public Item deleteItemType(@RequestBody BoardRequest boardRequest){
+
         return null;
     }
     @PostMapping(value = "/add-itemType/{boardId}",consumes = "application/json", produces = "application/json")

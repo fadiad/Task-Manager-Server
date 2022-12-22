@@ -20,8 +20,7 @@ public class EmailActivationFacade {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(email);
         mailMessage.setSubject("Complete Registration!");
-        mailMessage.setFrom("wanikhaled27@gmail.com");
-        mailMessage.setText("Thank you for registering to the ChatApp Application.\n"
+        mailMessage.setFrom("wanikhaled27@gmail.com");        mailMessage.setText("Thank you for registering to the ChatApp Application.\n"
                 + "This is a verification email, please click the link to verify your email address\n"
                 + "http://localhost:8080/auth/confirm-account?token="
                 + "\nThank you...");

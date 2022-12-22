@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -26,11 +28,11 @@ public class Item {
 
     private int statusId;
 
-    @Enumerated(EnumType.STRING)//TODO must fadi will test this later or  i will kick his butt
+    @Enumerated(EnumType.STRING)
     private ItemTypes itemType;
 
     private LocalDate dueDate;
-    private int parentItem;//TODO we will check if we will change it to item object
+    private int parentItem;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
@@ -43,6 +45,19 @@ public class Item {
 
     private int Importance;
 
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Comment> statues=new HashSet<>();
+
+    public void setItem(Item newItem){
+        this.assignTo=newItem.getAssignTo();
+        this.creator=newItem.getCreator();
+        this.Importance=newItem.getImportance();
+        this.itemType=newItem.getItemType();
+        this.parentItem=newItem.getParentItem();
+        this.statusId=newItem.getStatusId();
+        this.Description=newItem.getDescription();
+        this.Title=newItem.getTitle();
+    }
     public void setAssignTo(User assignTo) {
         this.assignTo = assignTo;
     }
@@ -50,6 +65,7 @@ public class Item {
     public void setCreator(User creator) {
         this.creator = creator;
     }
+
 
 
     @Override
