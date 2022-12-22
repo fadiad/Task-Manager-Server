@@ -1,6 +1,6 @@
 package TaskManager.entities;
 
-enum NotificationTypes {
+public enum NotificationTypes {
     ITEM_ASSIGNED_TO_ME,
     ITEM_STATUS_CHANGED,
     ITEM_COMMENT_ADDED,

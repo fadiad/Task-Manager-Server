@@ -4,6 +4,7 @@ import TaskManager.entities.LoginData;
 import TaskManager.entities.LoginRequest;
 import TaskManager.entities.SecurityUser;
 import TaskManager.entities.User;
+import TaskManager.entities.entitiesUtils.Validations;
 import TaskManager.entities.responseEntities.UserDTO;
 import TaskManager.service.AuthService;
 import TaskManager.utils.emailUtils.EmailActivationFacade;
@@ -39,9 +40,12 @@ public class AuthController {
     private final JWTTokenHelper jWTTokenHelper;
 
 
+
     @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
     public ResponseEntity<LoginData> login(@RequestBody LoginRequest credentials) {
-        //TODO we wii add validation here in the near future folks
+        if(!Validations.isEmailRegexValid(credentials.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid email");
+        }; //TODO we wii add validation here in the near future folks
         try {
             final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -58,7 +62,7 @@ public class AuthController {
 
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> create(@RequestBody User user) {
-        //TODO we wii add validation here in the near future folks
+        Validations.fullUserValid(user); //TODO we wii add validation here in the near future folks
         System.out.println(user);
         authService.addUser(user);
         logger.info("New user was added");

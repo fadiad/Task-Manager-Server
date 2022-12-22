@@ -29,7 +29,7 @@ public class EmailNotification {
         return new MimeMessage(session);
     }
 
-    public void sendEmailNotification(String mail, String text) { // The function that send the notification
+    public static void sendEmailNotification(String mail, String text) { // The function that send the notification
         to = mail;
         MimeMessage message = prepare();
 
