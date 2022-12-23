@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
     public void emailNotification(User user, NotificationTypes notificationTypes) throws IllegalAccessException {
     if(user.getNotificationTypes().contains(notificationTypes)){
-        EmailNotification.sendEmailNotification(user.getEmail(),notificationTypes.toString());
+        //EmailNotification.sendEmailNotification(user.getEmail(),notificationTypes.toString());
     }
     else
         throw new IllegalAccessException("user do not get email on this notification type");
