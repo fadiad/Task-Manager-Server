@@ -30,7 +30,11 @@ public class User{
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    //private Set<NotificationTypes> notificationTypes = new HashSet<>();
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_notification", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "notificationType", nullable = false)
+    private Set<NotificationTypes> notificationTypes = new HashSet<>();
 
     private boolean emailNotification;
     private boolean popUpNotification;
