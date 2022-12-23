@@ -1,4 +1,4 @@
-package TaskManager.entities;
+package TaskManager.entities.entitiesUtils;
 
 public enum NotificationTypes {
     ITEM_ASSIGNED_TO_ME,
