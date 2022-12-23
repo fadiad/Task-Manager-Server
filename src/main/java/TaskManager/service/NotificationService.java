@@ -1,7 +1,6 @@
 package TaskManager.service;
 
-import TaskManager.email.EmailNotification;
-import TaskManager.entities.NotificationTypes;
+import TaskManager.entities.entitiesUtils.NotificationTypes;
 import TaskManager.entities.User;
 import org.springframework.stereotype.Service;
 

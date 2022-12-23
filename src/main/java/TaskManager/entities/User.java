@@ -1,5 +1,6 @@
 package TaskManager.entities;
 
+import TaskManager.entities.entitiesUtils.NotificationTypes;
 import TaskManager.entities.entitiesUtils.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

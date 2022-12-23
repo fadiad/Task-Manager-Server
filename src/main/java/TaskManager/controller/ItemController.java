@@ -17,20 +17,20 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping(value = "/item-create", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Item> addNewItem(@RequestBody Item newItem){
+    public ResponseEntity<ItemDTO> addNewItem(@RequestBody Item newItem){
+        return new ResponseEntity<ItemDTO>(itemService.addNewItem(newItem), HttpStatus.CREATED);
+    }
+    @PutMapping(value = "/item-update/{itemId}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<ItemDTO> updateItem(@PathVariable("itemId") int itemId,@RequestBody Item updatedItem){
+        return new ResponseEntity<>(itemService.updateItem(itemId,updatedItem),HttpStatus.OK);
+    }
 
-        return new ResponseEntity<Item>(itemService.addNewItem(newItem), HttpStatus.CREATED);
-    }
-    @PutMapping(value = "/item-update", consumes = "application/json", produces = "application/json")
-    public Item  updateItem(@RequestBody Item updatedItem){
-        return null;
-    }
 
     @PutMapping(value = "/item-assignTO", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ItemDTO>  assignItemTo(@RequestParam int itemId, @RequestParam int userId){
-        return new ResponseEntity<>(itemService.aassignItemTo(itemId,userId),HttpStatus.OK);
-
+        return new ResponseEntity<>(itemService.assignItemTo(itemId,userId),HttpStatus.OK);
     }
+
     @DeleteMapping(value = "/item-delete/{itemId}")
     public void deleteItem(@PathVariable("itemId") int itemId){
         itemService.deleteItem(itemId);

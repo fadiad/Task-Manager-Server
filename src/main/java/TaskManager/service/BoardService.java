@@ -14,7 +14,12 @@ import TaskManager.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,7 +31,12 @@ public class BoardService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
+    public void deleteStatus(int boardId, int statusId) {
+        Board board = boardRepository.findById(boardId).orElseThrow(()-> new EntityNotFoundException("Board not found"));
+       // board.getStatues().stream().f
+    }
 
+    @Transactional
     public BoardToReturn addNewBoard(Board board , int userId){
         User user = userRepository.findById(userId).orElseThrow(()->  new IllegalArgumentException("user not found"));
         board.getUsersOnBoard().add(user);
@@ -38,7 +48,6 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).orElseThrow(()->new IllegalArgumentException("no board found"));
         List<Item> allItemsByBoardId=itemRepository.findByBoardId(boardId);
         List<ItemByStatusDTO>itemFilteredByStatus=board.getStatues().stream().map(taskStatus -> new ItemByStatusDTO(taskStatus,allItemsByBoardId)).collect(Collectors.toList());
-        System.out.println(itemFilteredByStatus);
         return new BoardDetailsDTO(board, itemFilteredByStatus);
     }
 
@@ -50,9 +59,10 @@ public class BoardService {
                 .map(BoardToReturn::new)
                 .collect(Collectors.toList());
     }
-    public void addNewStatusToBoard(int boardId, TaskStatus taskStatus) {
+    @Transactional
+    public Board addNewStatusToBoard(int boardId, TaskStatus taskStatus) {
         Board board = boardRepository.findById(boardId).orElseThrow(()-> new IllegalArgumentException("board not found"));
         board.getStatues().add(taskStatus);
-        boardRepository.save(board);
+        return boardRepository.save(board);
     }
 }
