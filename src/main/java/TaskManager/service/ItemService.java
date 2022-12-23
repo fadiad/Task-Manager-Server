@@ -9,6 +9,9 @@ import TaskManager.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
+
 @Service
 @AllArgsConstructor
 public class ItemService {
@@ -17,13 +20,14 @@ public class ItemService {
     private final BoardRepository boardRepository;
     private final ItemRepository itemRepository;
 
-    public Item addNewItem(Item newItem) {
+
+    public ItemDTO addNewItem(Item newItem) {
         User createUser = userRepository.findById(newItem.getCreator().getId()).orElseThrow(()->new IllegalArgumentException("User not found"));
         newItem.setCreator(createUser);
-        return itemRepository.save(newItem);
+        return new ItemDTO(itemRepository.save(newItem));
     }
 
-    public ItemDTO aassignItemTo(int itemId, int userId) {
+    public ItemDTO assignItemTo(int itemId, int userId) {
         User userToAssign = userRepository.findById( userId).orElseThrow(()->new IllegalArgumentException("User not found"));
         Item itemToAssign = itemRepository.findById(itemId).orElseThrow(()->new IllegalArgumentException("Item not found"));
         itemToAssign.setAssignTo(userToAssign);
@@ -36,6 +40,10 @@ public class ItemService {
         oldItem.setItem(updatedItem);
         return new ItemDTO(itemRepository.save(oldItem));
     }
-
+    @Transactional
+    public void deleteItem(int itemId) {
+        itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found"));
+        itemRepository.deleteById(itemId);
+    }
 
 }

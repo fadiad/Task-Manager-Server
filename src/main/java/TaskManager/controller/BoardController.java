@@ -36,12 +36,13 @@ public class BoardController {
     }
 
     @DeleteMapping(value = "/delete-statues", produces = "application/json")
-    public Item removeStatuses(@RequestParam int boardId,@RequestParam int statusId){
-        return null;
+    public ResponseEntity<Board> removeStatuses(@RequestParam int boardId, @RequestParam int statusId){
+        boardService.deleteStatus(boardId,statusId);
+        return ResponseEntity.noContent().build();
     }
     @PostMapping(value = "/add-statues/{boardId}", consumes = "application/json", produces = "application/json")
-    public Item addNewStatusToBoard(@PathVariable("boardId") int boardId ,@RequestBody TaskStatus taskStatus){
-        return null;
+    public ResponseEntity<Board>  addNewStatusToBoard(@PathVariable("boardId") int boardId ,@RequestBody TaskStatus taskStatus){
+        return new ResponseEntity<>(boardService.addNewStatusToBoard(boardId, taskStatus),HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/delete-itemType/{boardId}", consumes = "application/json", produces = "application/json")
