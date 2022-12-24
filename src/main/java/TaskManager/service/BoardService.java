@@ -5,6 +5,7 @@ import TaskManager.entities.Item;
 import TaskManager.entities.TaskStatus;
 import TaskManager.entities.User;
 import TaskManager.entities.entitiesUtils.ItemTypes;
+import TaskManager.entities.entitiesUtils.UserRole;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
 import TaskManager.entities.responseEntities.BoardToReturn;
 import TaskManager.entities.responseEntities.ItemByStatusDTO;
@@ -39,9 +40,15 @@ public class BoardService {
     @Transactional
     public BoardToReturn addNewBoard(Board board , int userId){
         User user = userRepository.findById(userId).orElseThrow(()->  new IllegalArgumentException("user not found"));
-        board.getUsersOnBoard().add(user);
-        user.getBoards().add(board);
-        return new BoardToReturn(boardRepository.save(board));
+
+        Board toSave = new Board();
+        toSave.setTitle(board.getTitle());
+//        toSave.getStatues().add(board.getStatues()); //TODO
+        toSave.getUsersRoles().put(user.getId(), UserRole.ROLE_ADMIN);
+        toSave.getUsersOnBoard().add(user);
+        user.getBoards().add(toSave);
+
+        return new BoardToReturn(boardRepository.save(toSave));
     }
 
     public BoardDetailsDTO getBoardById(int boardId) {

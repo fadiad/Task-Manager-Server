@@ -6,8 +6,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,6 +17,7 @@ import java.util.Set;
 
 @Entity
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Board {
@@ -22,6 +25,7 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @Pattern(regexp = "^[a-zA-Z0-9]+$")
     private String title;
 
     @ElementCollection
