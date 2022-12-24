@@ -69,12 +69,4 @@ public class AuthController {
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
-    @GetMapping
-    public void onlyAdmin() {
-        System.out.println("hi admin");
-
-        emailActivationFacade.sendVerificationEmail("saraysara1996@gmail.com");
-    }
-
-
 }
