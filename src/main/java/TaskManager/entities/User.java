@@ -66,4 +66,20 @@ public class User {
         this.userRole = userRole;
     }
 
+
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", userRole=" + userRole +
+                ", notificationTypes=" + notificationTypes +
+                ", emailNotification=" + emailNotification +
+                ", popUpNotification=" + popUpNotification +
+                ", boards=" + boards +
+                '}';
+    }
 }

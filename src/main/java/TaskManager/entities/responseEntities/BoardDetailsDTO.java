@@ -6,18 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class BoardDetailsDTO{
     private Board board;
-    private List<ItemByStatusDTO> itemsByStatus;
+    private Map<Integer,List<ItemDTO>> itemFilteredByStatus;
 
-    @Override
-    public String toString() {
-        return "BoardDetailsDTO{" +
-                "board=" + board +
-                ", itemsByStatus=" + itemsByStatus +
-                '}';
-    }
 }

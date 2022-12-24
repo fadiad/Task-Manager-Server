@@ -15,6 +15,7 @@ import javax.naming.NoPermissionException;
 import javax.validation.Valid;
 
 @RestController
+///{boardId}/item"
 @RequestMapping("/item")
 @AllArgsConstructor
 public class ItemController {

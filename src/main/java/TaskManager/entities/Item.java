@@ -70,7 +70,9 @@ public class Item {
         this.creator = creator;
     }
 
-
+    public void setItemType(ItemTypes itemType) {
+        this.itemType = itemType;
+    }
 
     @Override
     public String toString() {

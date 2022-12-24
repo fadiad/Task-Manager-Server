@@ -8,5 +8,4 @@ import lombok.NoArgsConstructor;
 @Getter
 public class BoardRequest {
     private ItemTypes type;
-
 }
