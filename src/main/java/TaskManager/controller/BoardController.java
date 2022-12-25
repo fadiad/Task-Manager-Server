@@ -1,10 +1,8 @@
 package TaskManager.controller;
 
 import TaskManager.entities.Board;
-import TaskManager.entities.Item;
 import TaskManager.entities.TaskStatus;
 import TaskManager.entities.requests.BoardRequest;
-import TaskManager.entities.requests.NotificationRequest;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
 import TaskManager.entities.responseEntities.BoardToReturn;
 import TaskManager.repository.BoardRepository;
@@ -64,5 +62,9 @@ public class BoardController {
         System.out.println(boardRequest);
         return new ResponseEntity<>(boardService.addItemTypeOnBoard(boardId, boardRequest.getType()), HttpStatus.OK);
     }
+    @PutMapping(value = "/updateItemStatus/{boardId}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Board> updateItemStatus(@PathVariable("boardId") int boardId,@RequestParam int itemId, @RequestBody TaskStatus taskStatus) {
 
+        return new ResponseEntity<>(boardService.updateItemStatusToBoard(boardId, itemId ,taskStatus), HttpStatus.OK);
+    }
 }

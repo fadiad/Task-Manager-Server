@@ -1,9 +1,6 @@
 package TaskManager.service;
 
-import TaskManager.entities.Board;
-import TaskManager.entities.Item;
-import TaskManager.entities.TaskStatus;
-import TaskManager.entities.User;
+import TaskManager.entities.*;
 import TaskManager.entities.entitiesUtils.ItemTypes;
 import TaskManager.entities.entitiesUtils.UserRole;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
@@ -114,5 +111,22 @@ public class BoardService {
             board.getItemTypes().add(itemTypes);
         }
         return boardRepository.save(board);
+    }
+    @Transactional
+    public Board updateItemStatusToBoard(int boardId, int itemId, TaskStatus taskStatus) {
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("item not found"));
+        int statusId = item.getStatusId();
+        Set<TaskStatus> result = board.getStatues();
+
+        for (TaskStatus task: result) {
+            if(task.getId()==statusId){
+                task.setName(taskStatus.getName());
+                itemRepository.save(item);
+                boardRepository.save(board);
+                return board;
+            }
+        }
+        throw new IllegalArgumentException("STATUS NOT FOUND");
     }
 }
