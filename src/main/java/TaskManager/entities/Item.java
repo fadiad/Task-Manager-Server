@@ -26,7 +26,7 @@ public class Item {
     private int id;
     private int boardId;
 
-    @Pattern(regexp = "^[a-zA-Z0-9]+$")
+//    @Pattern(regexp = "^[a-zA-Z0-9]+$")
     private String title;
 
     private String Description;

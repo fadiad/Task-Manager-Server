@@ -23,14 +23,14 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping(value = "/item-create", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ItemDTO> addNewItem(@Valid @RequestBody Item newItem) {
+    public ResponseEntity<ItemDTO> addNewItem(@RequestBody Item newItem) {
 
         System.out.println(newItem.getStatusId() + " " + newItem.getBoardId());
         return new ResponseEntity<ItemDTO>(itemService.addNewItem(newItem), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/item-update/{itemId}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ItemDTO> updateItem(@PathVariable("itemId") int itemId, @Valid @RequestBody Item updatedItem) {
+    public ResponseEntity<ItemDTO> updateItem(@PathVariable("itemId") int itemId,@RequestBody Item updatedItem) {
         UserRole userRole = UserRole.ROLE_ADMIN;
 
         try {

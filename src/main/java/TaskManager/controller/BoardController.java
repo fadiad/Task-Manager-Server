@@ -24,14 +24,14 @@ public class BoardController {
     private final BoardRepository boardRepository;
 
     @PostMapping(value = "/board-create", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<BoardToReturn> createBoard(@RequestBody Board board, @RequestParam int userId){
-        return new ResponseEntity<>(boardService.addNewBoard(board,userId),HttpStatus.CREATED);
+    public ResponseEntity<BoardToReturn> createBoard(@RequestBody Board board, @RequestParam int userId) {
+        return new ResponseEntity<>(boardService.addNewBoard(board, userId), HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/{boardId}",produces = "application/json")
-    public ResponseEntity<BoardDetailsDTO> getBoardById(@PathVariable("boardId") int boardId){
-        int userId =1;
-        return new ResponseEntity<>(boardService.getBoardById(boardId,userId), HttpStatus.OK);
+    @GetMapping(value = "/{boardId}", produces = "application/json")
+    public ResponseEntity<BoardDetailsDTO> getBoardById(@PathVariable("boardId") int boardId) {
+        int userId = 1;
+        return new ResponseEntity<>(boardService.getBoardById(boardId, userId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/get-boards-by-userId", method = RequestMethod.GET)
@@ -39,23 +39,25 @@ public class BoardController {
         return boardService.getUserBoards(userId);
     }
 
-    @DeleteMapping(value = "/delete-statues/{boardId}", produces = "application/json")
-    public ResponseEntity<Board> removeStatuses(@PathVariable("boardId") int boardId, @RequestBody TaskStatus status){
+    @PutMapping(value = "/delete-statues/{boardId}")
+    public ResponseEntity<Board> removeStatuses(@PathVariable("boardId") int boardId, @RequestBody TaskStatus status) {
         System.out.println(status);
-        boardService.deleteStatus(boardId,status);
+        boardService.deleteStatus(boardId, status);
         return ResponseEntity.noContent().build();
     }
+
     @PostMapping(value = "/add-statues/{boardId}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Board>  addNewStatusToBoard(@PathVariable("boardId") int boardId ,@RequestBody TaskStatus taskStatus){
-        return new ResponseEntity<>(boardService.addNewStatusToBoard(boardId, taskStatus),HttpStatus.CREATED);
+    public ResponseEntity<Board> addNewStatusToBoard(@PathVariable("boardId") int boardId, @RequestBody TaskStatus taskStatus) {
+        return new ResponseEntity<>(boardService.addNewStatusToBoard(boardId, taskStatus), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/delete-itemType/{boardId}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Board> deleteItemType(@PathVariable("boardId")int boardId,@RequestBody BoardRequest boardRequest){
-        return new ResponseEntity<>(boardService.deleteItemTypeOnBoard(boardId,boardRequest.getType()),HttpStatus.OK);
+    public ResponseEntity<Board> deleteItemType(@PathVariable("boardId") int boardId, @RequestBody BoardRequest boardRequest) {
+        return new ResponseEntity<>(boardService.deleteItemTypeOnBoard(boardId, boardRequest.getType()), HttpStatus.OK);
     }
-    @PostMapping(value = "/add-itemType/{boardId}",consumes = "application/json", produces = "application/json")
-    public Item addItemType(@RequestBody BoardRequest boardRequest){
+
+    @PostMapping(value = "/add-itemType/{boardId}", consumes = "application/json", produces = "application/json")
+    public Item addItemType(@RequestBody BoardRequest boardRequest) {
         System.out.println(boardRequest);
         return null;
     }
