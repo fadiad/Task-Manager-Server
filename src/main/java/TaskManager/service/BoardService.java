@@ -84,17 +84,38 @@ public class BoardService {
         board.getStatues().add(taskStatus);
         return boardRepository.save(board);
     }
+
     //TODO done
     @Transactional
-    public Board deleteItemTypeOnBoard(int boardId, ItemTypes type) {
+    public Board deleteItemTypeOnBoard(int boardId, Set<ItemTypes> typeSet) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
-        if (!board.getItemTypes().remove(type)) {
-            throw new IllegalArgumentException("No such type on this board");
-        }
-        List<Item> items = itemRepository.findByBoardIdAndItemType(boardId, type);
-        items.forEach(item -> item.setItemType(null));
-        itemRepository.saveAll(items);
+        Set<ItemTypes> types = board.getItemTypes();
 
+        for (ItemTypes itemTypes : typeSet) {
+            if (!types.remove(itemTypes))
+                throw new IllegalArgumentException("No such type on this board");
+        }
+
+        List<Item> items = itemRepository.findByBoardId(boardId);
+
+        for (ItemTypes type : types) {
+            items.forEach(item -> {
+                if (item.getItemType() == type) {
+                    item.setItemType(null);
+                }
+            });
+        }
+
+        itemRepository.saveAll(items);
+        return boardRepository.save(board);
+    }
+
+    @Transactional
+    public Board addItemTypeOnBoard(int boardId, Set<ItemTypes> typeSet) {
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
+        for (ItemTypes itemTypes : typeSet) {
+            board.getItemTypes().add(itemTypes);
+        }
         return boardRepository.save(board);
     }
 }

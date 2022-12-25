@@ -52,11 +52,12 @@ public class BoardController {
 
     @DeleteMapping(value = "/delete-itemType/{boardId}", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Board> deleteItemType(@PathVariable("boardId")int boardId,@RequestBody BoardRequest boardRequest){
+        System.out.println(boardRequest.getType());
         return new ResponseEntity<>(boardService.deleteItemTypeOnBoard(boardId,boardRequest.getType()),HttpStatus.OK);
     }
     @PostMapping(value = "/add-itemType/{boardId}",consumes = "application/json", produces = "application/json")
-    public Item addItemType(@RequestBody BoardRequest boardRequest){
+    public  ResponseEntity<Board> addItemType(@PathVariable("boardId")int boardId, @RequestBody BoardRequest boardRequest){
         System.out.println(boardRequest);
-        return null;
+        return new ResponseEntity<>(boardService.addItemTypeOnBoard(boardId,boardRequest.getType()),HttpStatus.OK);
     }
 }
