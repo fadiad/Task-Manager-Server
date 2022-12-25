@@ -22,7 +22,8 @@ public class GitController {
     public ResponseEntity<GitUser> OAuth2Request(@RequestParam String code) {
         String gitToken = gitService.getTokenFromCode(code);
         ResponseEntity<GitUser> result = gitService.getDetailsFromToken(gitToken);
-        GitUser gitUser = result.getBody();
+
+        GitUser gitUser = result.getBody(); //EMAIL+NAME
 
         //find user by email,
         if(true){ // TODO: IF USER NOT EXIST IN D"B TO ADD CREATION;
@@ -33,6 +34,5 @@ public class GitController {
         authController.login(loginRequest); //TODO: TO LOGIN THE GITHUB USER WITHE TOKEN;
         return result;
     }
-
 
 }

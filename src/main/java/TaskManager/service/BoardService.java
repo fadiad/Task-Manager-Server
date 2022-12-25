@@ -31,6 +31,7 @@ public class BoardService {
     //TODO done
     @Transactional
     public void deleteStatus(int boardId, TaskStatus status) {
+        System.out.println("status : " + status);
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
         boolean removedStatus = board.getStatues().remove(status);
         if (!removedStatus) {
@@ -90,22 +91,18 @@ public class BoardService {
     public Board deleteItemTypeOnBoard(int boardId, Set<ItemTypes> typeSet) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
         Set<ItemTypes> types = board.getItemTypes();
+        List<Item> items = itemRepository.findByBoardId(boardId);
 
         for (ItemTypes itemTypes : typeSet) {
             if (!types.remove(itemTypes))
                 throw new IllegalArgumentException("No such type on this board");
-        }
 
-        List<Item> items = itemRepository.findByBoardId(boardId);
-
-        for (ItemTypes type : types) {
-            items.forEach(item -> {
-                if (item.getItemType() == type) {
+              items.forEach(item -> {
+                if (item.getItemType() == itemTypes) {
                     item.setItemType(null);
                 }
             });
         }
-
         itemRepository.saveAll(items);
         return boardRepository.save(board);
     }

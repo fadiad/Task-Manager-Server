@@ -41,7 +41,7 @@ public class ItemService {
         toSave.setCreator(createUser);
         toSave.setBoardId(newItem.getBoardId());
         toSave.setTitle(newItem.getTitle());
-        toSave.setStatusId(newItem.getBoardId());
+        toSave.setStatusId(newItem.getStatusId());
         System.out.println("toSave : " + toSave);
         return new ItemDTO(itemRepository.save(toSave));
     }
@@ -68,6 +68,8 @@ public class ItemService {
     //TODO DONE
     public ItemDTO updateItem(int itemId, Item updatedItem, UserRole userRole) throws NoPermissionException {
         Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("Item not found"));
+
+        System.out.println(updatedItem);
 
         if (userRole == UserRole.ROLE_LEADER) {
             if (!oldItem.getDueDate().equals(updatedItem.getDueDate()) ||

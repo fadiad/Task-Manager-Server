@@ -55,10 +55,10 @@ public class Validations {
         if(!isEmailRegexValid(user.getEmail())){
             throw new IllegalArgumentException("EMAIL NOT VALID");
         }
-        if(isUserNamedRegexValid(user.getUsername())){
+        if(!isUserNamedRegexValid(user.getUsername())){
             throw new IllegalArgumentException("NAME NOT VALID");
         }
-        if(isPasswordRegexValid(user.getPassword())){
+        if(!isPasswordRegexValid(user.getPassword())){
             throw new IllegalArgumentException("PASSWORD NOT VALID");
         }
     }

@@ -26,16 +26,15 @@ public class ItemController {
     private final NotificationService notificationService;
 
     @PostMapping(value = "/item-create", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ItemDTO> addNewItem(@Valid @RequestBody Item newItem) {
+    public ResponseEntity<ItemDTO> addNewItem(@RequestBody Item newItem) {
 
         System.out.println(newItem.getStatusId() + " " + newItem.getBoardId());
         return new ResponseEntity<ItemDTO>(itemService.addNewItem(newItem), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/item-update/{itemId}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ItemDTO> updateItem(@PathVariable("itemId") int itemId, @Valid @RequestBody Item updatedItem) {
+    public ResponseEntity<ItemDTO> updateItem(@PathVariable("itemId") int itemId,@RequestBody Item updatedItem) {
         UserRole userRole = UserRole.ROLE_ADMIN;
-//        notificationService.ItemNotification(123 , NotificationTypes.ITEM_DATA_CHANGED );
         try {
             return new ResponseEntity<>(itemService.updateItem(itemId, updatedItem, userRole), HttpStatus.OK);
         } catch (NoPermissionException e) {
@@ -48,14 +47,16 @@ public class ItemController {
     public ResponseEntity<ItemDTO> assignItemTo(@RequestParam int itemId, @RequestParam int userId, @PathVariable("boardId") int boardId) {
 
         System.out.println(boardId);
-        return new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
+        ResponseEntity<ItemDTO> result = new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
+        notificationService.itemAssignedToMe(itemId,userId,boardId); //send notification
+        return result;
+
     }
 
     @DeleteMapping(value = "/item-delete/{itemId}")
     public void deleteItem(@PathVariable("itemId") int itemId) {
+        notificationService.itemDeleted(itemId);
         itemService.deleteItem(itemId);
-        //TODO: FOUND BOARD ID
-        notificationService.ItemNotification(123, NotificationTypes.ITEM_DELETED); //send message to all users that in this board with the item that deleted
     }
 
     @PostMapping(value = "/add-comment/{itemId}")

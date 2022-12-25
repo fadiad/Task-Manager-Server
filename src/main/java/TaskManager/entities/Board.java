@@ -25,7 +25,7 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Pattern(regexp = "^[a-zA-Z0-9]+$")
+
     private String title;
 
     @ElementCollection
@@ -48,15 +48,4 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<TaskStatus> statues=new HashSet<>();
 
-    @Override
-    public String toString() {
-        return "Board{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", itemTypes=" + itemTypes +
-                ", usersRoles=" + usersRoles +
-                ", usersOnBoard=" + usersOnBoard +
-                ", statues=" + statues +
-                '}';
-    }
 }
