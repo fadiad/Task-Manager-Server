@@ -38,6 +38,4 @@ public class NotificationService {
                 System.out.println("user don't get email on this notification type");
         }
     }
-
-
 }
