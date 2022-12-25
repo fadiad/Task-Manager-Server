@@ -9,6 +9,8 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,12 +20,17 @@ import java.util.Set;
 @Table(name = "user")
 @Transactional
 @Getter
-public class User{
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    @NotBlank
+    @NotNull
     @Column(unique = true)
     private String username;
+
     @Column(unique = true)
     private String email;
     private String password;
@@ -59,4 +66,20 @@ public class User{
         this.userRole = userRole;
     }
 
+
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", userRole=" + userRole +
+                ", notificationTypes=" + notificationTypes +
+                ", emailNotification=" + emailNotification +
+                ", popUpNotification=" + popUpNotification +
+                ", boards=" + boards +
+                '}';
+    }
 }

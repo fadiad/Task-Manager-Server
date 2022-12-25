@@ -4,9 +4,11 @@ import TaskManager.entities.entitiesUtils.ItemTypes;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +18,7 @@ import java.util.Set;
 @Table(name = "item")
 @Transactional
 @Getter
+@Setter
 @AllArgsConstructor
 public class Item {
     @Id
@@ -23,7 +26,9 @@ public class Item {
     private int id;
     private int boardId;
 
-    private String Title;
+    @Pattern(regexp = "^[a-zA-Z0-9]+$")
+    private String title;
+
     private String Description;
 
     private int statusId;
@@ -43,21 +48,20 @@ public class Item {
     @JoinColumn(name = "assign_to_id")
     private User assignTo;
 
-    private int Importance;
+    private int importance;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Comment> statues=new HashSet<>();
 
     public void setItem(Item newItem){
-        this.assignTo=newItem.getAssignTo();
-        this.creator=newItem.getCreator();
-        this.Importance=newItem.getImportance();
+        this.importance =newItem.getImportance();
         this.itemType=newItem.getItemType();
-        this.parentItem=newItem.getParentItem();
-        this.statusId=newItem.getStatusId();
+//        this.parentItem=newItem.getParentItem();
         this.Description=newItem.getDescription();
-        this.Title=newItem.getTitle();
+        this.title =newItem.getTitle();
+        this.dueDate = newItem.getDueDate();
     }
+
     public void setAssignTo(User assignTo) {
         this.assignTo = assignTo;
     }
@@ -66,14 +70,16 @@ public class Item {
         this.creator = creator;
     }
 
-
+    public void setItemType(ItemTypes itemType) {
+        this.itemType = itemType;
+    }
 
     @Override
     public String toString() {
         return "Item{" +
                 "id=" + id +
                 ", boardId=" + boardId +
-                ", Title='" + Title + '\'' +
+                ", Title='" + title + '\'' +
                 ", Description='" + Description + '\'' +
                 ", StatusId=" + statusId +
                 ", itemType=" + itemType +
@@ -81,7 +87,7 @@ public class Item {
                 ", parentItem=" + parentItem +
                 ", creator=" + creator +
                 ", assignTo=" + assignTo +
-                ", Importance=" + Importance +
+                ", Importance=" + importance +
                 '}';
     }
 }

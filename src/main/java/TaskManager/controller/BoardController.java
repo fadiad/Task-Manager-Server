@@ -6,6 +6,7 @@ import TaskManager.entities.TaskStatus;
 import TaskManager.entities.requests.BoardRequest;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
 import TaskManager.entities.responseEntities.BoardToReturn;
+import TaskManager.repository.BoardRepository;
 import TaskManager.service.BoardService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,14 +21,17 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final BoardRepository boardRepository;
+
     @PostMapping(value = "/board-create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<BoardToReturn> createBoard(@RequestBody Board board, @RequestParam int userId){
         return new ResponseEntity<>(boardService.addNewBoard(board,userId),HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/{boardId}",produces = "application/json")
-    public ResponseEntity<BoardDetailsDTO> createBoard(@PathVariable("boardId") int boardId){
-        return new ResponseEntity<>(boardService.getBoardById(boardId), HttpStatus.OK);
+    public ResponseEntity<BoardDetailsDTO> getBoardById(@PathVariable("boardId") int boardId){
+        int userId =1;
+        return new ResponseEntity<>(boardService.getBoardById(boardId,userId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/get-boards-by-userId", method = RequestMethod.GET)
@@ -35,9 +39,10 @@ public class BoardController {
         return boardService.getUserBoards(userId);
     }
 
-    @DeleteMapping(value = "/delete-statues", produces = "application/json")
-    public ResponseEntity<Board> removeStatuses(@RequestParam int boardId, @RequestParam int statusId){
-        boardService.deleteStatus(boardId,statusId);
+    @DeleteMapping(value = "/delete-statues/{boardId}", produces = "application/json")
+    public ResponseEntity<Board> removeStatuses(@PathVariable("boardId") int boardId, @RequestBody TaskStatus status){
+        System.out.println(status);
+        boardService.deleteStatus(boardId,status);
         return ResponseEntity.noContent().build();
     }
     @PostMapping(value = "/add-statues/{boardId}", consumes = "application/json", produces = "application/json")
@@ -46,9 +51,8 @@ public class BoardController {
     }
 
     @DeleteMapping(value = "/delete-itemType/{boardId}", consumes = "application/json", produces = "application/json")
-    public Item deleteItemType(@RequestBody BoardRequest boardRequest){
-
-        return null;
+    public ResponseEntity<Board> deleteItemType(@PathVariable("boardId")int boardId,@RequestBody BoardRequest boardRequest){
+        return new ResponseEntity<>(boardService.deleteItemTypeOnBoard(boardId,boardRequest.getType()),HttpStatus.OK);
     }
     @PostMapping(value = "/add-itemType/{boardId}",consumes = "application/json", produces = "application/json")
     public Item addItemType(@RequestBody BoardRequest boardRequest){
