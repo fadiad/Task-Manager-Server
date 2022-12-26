@@ -2,6 +2,9 @@ package TaskManager.controller;
 
 import TaskManager.entities.Comment;
 import TaskManager.entities.Item;
+
+import TaskManager.entities.entitiesUtils.FilterItem;
+
 import TaskManager.entities.entitiesUtils.UserRole;
 import TaskManager.entities.responseEntities.ItemDTO;
 import TaskManager.service.ItemService;
@@ -11,11 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import javax.naming.NoPermissionException;
+import java.util.List;
+
 
 @RestController
-///{boardId}/item"
 @RequestMapping("/item")
 @AllArgsConstructor
 public class ItemController {
@@ -46,9 +49,8 @@ public class ItemController {
 
         System.out.println(boardId);
         ResponseEntity<ItemDTO> result = new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
-        notificationService.itemAssignedToMe(itemId,userId,boardId); //send notification
+        notificationService.itemAssignedToMe(itemId, userId, boardId); //send notification
         return result;
-
     }
 
     @DeleteMapping(value = "/item-delete")
@@ -62,6 +64,12 @@ public class ItemController {
         int userId=1;
         Comment comment1 = itemService.addComment(itemId, userId , comment);
         notificationService.commentAdded(userId);
+    }
+
+
+    @PostMapping(value = "/filter", produces = "application/json")
+    public List<ItemDTO> getBoardById(@RequestBody FilterItem filterItem) {
+        return itemService.filter(filterItem);
     }
 
 }

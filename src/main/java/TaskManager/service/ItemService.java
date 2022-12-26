@@ -4,22 +4,22 @@ import TaskManager.entities.Board;
 import TaskManager.entities.Comment;
 import TaskManager.entities.Item;
 import TaskManager.entities.User;
+import TaskManager.entities.entitiesUtils.FilterItem;
 import TaskManager.entities.entitiesUtils.UserRole;
 import TaskManager.entities.responseEntities.ItemDTO;
 import TaskManager.repository.BoardRepository;
 import TaskManager.repository.ItemRepository;
 import TaskManager.repository.UserRepository;
+import TaskManager.utils.filter.QueryBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import javax.naming.NoPermissionException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-import static java.time.LocalTime.now;
-import static java.time.temporal.TemporalQueries.localDate;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +28,12 @@ public class ItemService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final ItemRepository itemRepository;
+
+    //------------------------------------
+    public List<ItemDTO> filter(FilterItem filter) {
+        QueryBuilder queryBuilder = new QueryBuilder(filter);
+        return itemRepository.findAll(queryBuilder).stream().map(ItemDTO::new).collect(Collectors.toList());
+    }
 
     //TODO DONE
     public ItemDTO addNewItem(Item newItem) {
