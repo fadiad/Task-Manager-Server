@@ -12,10 +12,10 @@ import TaskManager.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Set;
 
-import static TaskManager.entities.entitiesUtils.NotificationTypes.ITEM_ASSIGNED_TO_ME;
-import static TaskManager.entities.entitiesUtils.NotificationTypes.ITEM_DELETED;
+import static TaskManager.entities.entitiesUtils.NotificationTypes.*;
 import static TaskManager.entities.entitiesUtils.Ways.EMAIL;
 import static TaskManager.entities.entitiesUtils.Ways.POP_UP;
 
@@ -45,8 +45,9 @@ public class NotificationService {
 
     }
 
-    public void commentAdded() {
-
+    public void commentAdded(int userID) {
+        User user = userRepository.findById(userID).orElseThrow(() -> new EntityNotFoundException("user not found"));
+        sendMailMassage(user, ITEM_COMMENT_ADDED, "ITEM COMMENT ADDED");
     }
     public void dataChange() {
 
@@ -77,28 +78,10 @@ public class NotificationService {
     public void notificationSetting(int userId, NotificationRequest notificationRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
         System.out.println(user.getUsername());
-
-        if (notificationRequest.getWays().contains(EMAIL)) {
-            user.setEmailNotification(true);
-            userRepository.save(user);
-        } else {
-            user.setEmailNotification(false);
-            userRepository.save(user);
-        }
-
-        if (notificationRequest.getWays().contains(POP_UP)) {
-            user.setPopUpNotification(true);
-            userRepository.save(user);
-        } else {
-            user.setPopUpNotification(false);
-            userRepository.save(user);
-        }
-
+        user.setEmailNotification(notificationRequest.getWays().contains(EMAIL));
+        user.setPopUpNotification(notificationRequest.getWays().contains(POP_UP));
         Set<NotificationTypes> types = notificationRequest.getOption();
-        user.getNotificationTypes().clear();
-        for (NotificationTypes ty : types) {
-            user.getNotificationTypes().add(ty);
-        }
-        System.out.println(user.getNotificationTypes().toString());
+        user.setNotificationTypes(types);
+        userRepository.save(user);
     }
 }

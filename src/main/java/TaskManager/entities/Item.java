@@ -51,7 +51,7 @@ public class Item {
     private int importance;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<Comment> statues=new HashSet<>();
+    private Set<Comment> statues=new HashSet<>(); //THE LIST OG THE COMMENT
 
     public void setItem(Item newItem){
         this.importance =newItem.getImportance();

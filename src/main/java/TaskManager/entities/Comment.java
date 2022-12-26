@@ -4,23 +4,24 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 @Entity
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private String Username;
-    private int receiverId;
-    private String content;
-    private LocalDate date;
-    private LocalTime time;
+    private String username;
+    private String content; //
+    private LocalDate date; //now
+    private LocalTime time; // now+10
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

@@ -26,6 +26,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    public void setId(int id) {
+        this.id = id;
+    }
 
     @Column(unique = true)
     private String username;
