@@ -1,10 +1,14 @@
 package TaskManager.config;
 
 
+import TaskManager.filters.JWTAuthenticationFilter;
+import TaskManager.filters.PermissionFilter;
 import TaskManager.utils.jwtUtils.JWTTokenHelper;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -15,6 +19,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -23,6 +30,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @EnableMethodSecurity
 @AllArgsConstructor
+@EnableWebMvc
 public class SecurityConfig {
 
     private final UserDetailsService myUserDetailsService;
@@ -30,7 +38,7 @@ public class SecurityConfig {
 
     private final JWTTokenHelper jWTTokenHelper;
 
-
+    @Autowired
     private  final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
@@ -44,14 +52,17 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.sessionManagement().sessionCreationPolicy(STATELESS);
-                   //.and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
-//                .and().authorizeRequests((request) -> request.antMatchers( "/auth/**").permitAll()
-//                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated())
-//                .addFilterBefore(new JWTAuthenticationFilter(myUserDetailsService, jWTTokenHelper), UsernamePasswordAuthenticationFilter.class);
-        http.authorizeRequests().anyRequest().permitAll();//TODO i will remove this later
+        http.sessionManagement().sessionCreationPolicy(STATELESS).and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                .and().authorizeRequests((request) -> request.antMatchers( "/auth/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated())
+                .addFilterBefore(new JWTAuthenticationFilter(myUserDetailsService, jWTTokenHelper), UsernamePasswordAuthenticationFilter.class).
+                 addFilterAfter(new PermissionFilter(requestMappingHandlerMapping()), JWTAuthenticationFilter.class);
         http.csrf().disable().cors().and().headers().frameOptions().disable();
         return http.build();
     }
 
+    @Bean
+    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
+        return new RequestMappingHandlerMapping();
+    }
 }
