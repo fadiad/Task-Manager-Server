@@ -6,5 +6,5 @@ public enum NotificationTypes {
     ITEM_COMMENT_ADDED,
     ITEM_DELETED,
     ITEM_DATA_CHANGED,
-    USER_ADDED_TO_THE_SYSTEM, EMAIL;
+    USER_ADDED_TO_THE_SYSTEM;
 }

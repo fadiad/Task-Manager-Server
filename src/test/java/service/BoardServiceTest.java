@@ -14,7 +14,7 @@ import TaskManager.service.BoardService;
 import TaskManager.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
@@ -25,13 +25,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 @ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class BoardServiceTest {
 
     @Mock
@@ -62,34 +71,29 @@ public class BoardServiceTest {
     }
 
     @Test
-    @DisplayName("Trying to delete status not successfully, entity not found")
     void deleteStatus_Not_successfully() {
         TaskStatus taskStatus = new TaskStatus(1, "taskStatus", goodBoard);
         assertThrows(EntityNotFoundException.class, ()-> boardService.deleteStatus(2, taskStatus), "Board not found" );
     }
     @Test
-    void addNewBoard_successfully() {
-        given(userRepository.findById(user.getId())).willReturn(Optional.ofNullable(user));
+    public void testAddNewBoard() {
 
-        Board toSave = new Board();
-        toSave.setTitle(goodBoard.getTitle());
-        toSave.setItemTypes(goodBoard.getItemTypes());
-        toSave.getUsersRoles().put(user.getId(), UserRole.ROLE_ADMIN);
-        toSave.getUsersOnBoard().add(user);
 
-        when(user.getBoards().add(toSave));
+        // Create mock board
+        Board board = new Board();
+        board.setTitle("Test Board");
 
-        assertEquals(boardService.addNewBoard(goodBoard, user.getId()), toSave);
+        // Configure mock user repository to return the mock user when findById is called
+        when(userRepository.findById(any(Integer.class))).thenReturn(Optional.of(user));
+
+        // Configure mock board repository to return the same board that is passed to it when save is called
+        when(boardRepository.save(any(Board.class))).thenReturn(goodBoard);
+
+        // Call addNewBoard method
+        BoardToReturn result = boardService.addNewBoard(goodBoard, 1);
+
+        // Verify that the result is as expected
+        assertEquals(goodBoard.getId(), result.getId());
+        assertEquals(goodBoard.getTitle(), result.getTitle());
     }
-/*    @Transactional
-    public BoardToReturn addNewBoard(Board board, int userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
-        Board toSave = new Board();
-        toSave.setTitle(board.getTitle());
-        toSave.setItemTypes(board.getItemTypes());
-        toSave.getUsersRoles().put(user.getId(), UserRole.ROLE_ADMIN);
-        toSave.getUsersOnBoard().add(user);
-        user.getBoards().add(toSave);
-        return new BoardToReturn(boardRepository.save(toSave));
-    }*/
 }
