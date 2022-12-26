@@ -2,6 +2,7 @@ package TaskManager.repository;
 
 import TaskManager.entities.Item;
 import TaskManager.entities.entitiesUtils.ItemTypes;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +16,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
    void deleteByStatusId(int statusId);
 
-
    List<Item> findByBoardIdAndItemType(int boardId, ItemTypes type);
+
+   List<Item> findAll(Specification<Item> specification);
 }
