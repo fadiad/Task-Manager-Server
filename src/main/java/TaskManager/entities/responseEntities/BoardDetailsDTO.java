@@ -14,5 +14,6 @@ import java.util.Map;
 public class BoardDetailsDTO{
     private Board board;
     private Map<Integer,List<ItemDTO>> itemFilteredByStatus;
+    private List<UserDTO> usersOnBoard ;
 
 }

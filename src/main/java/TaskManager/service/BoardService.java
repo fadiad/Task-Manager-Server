@@ -9,6 +9,7 @@ import TaskManager.entities.entitiesUtils.UserRole;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
 import TaskManager.entities.responseEntities.BoardToReturn;
 import TaskManager.entities.responseEntities.ItemDTO;
+import TaskManager.entities.responseEntities.UserDTO;
 import TaskManager.repository.BoardRepository;
 import TaskManager.repository.ItemRepository;
 import TaskManager.repository.UserRepository;
@@ -59,9 +60,15 @@ public class BoardService {
         if (!board.getUsersRoles().containsKey(userId)) {
             throw new IllegalArgumentException("this user not on board");
         }
+//        System.out.println(board.getUsersOnBoard());
+
+        List<UserDTO> useresOnBoard = board.getUsersOnBoard().stream().map(user -> new UserDTO(user)).collect(Collectors.toList());
+
         List<Item> allItemsByBoardId = itemRepository.findByBoardId(boardId);
+
         Map<Integer, List<ItemDTO>> itemFilteredByStatus = board.getStatues().stream().collect(Collectors.toMap(TaskStatus::getId, taskStatus -> filterItemsByStatus(taskStatus.getId(), allItemsByBoardId)));
-        return new BoardDetailsDTO(board, itemFilteredByStatus);
+
+        return new BoardDetailsDTO(board, itemFilteredByStatus , useresOnBoard);
     }
 
     private List<ItemDTO> filterItemsByStatus(int statusId, List<Item> allItems) {
@@ -85,6 +92,7 @@ public class BoardService {
         board.getStatues().add(taskStatus);
         return boardRepository.save(board);
     }
+
     //TODO done
     @Transactional
     public Board deleteItemTypeOnBoard(int boardId, ItemTypes type) {

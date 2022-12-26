@@ -69,7 +69,7 @@ public class ItemService {
     public ItemDTO updateItem(int itemId, Item updatedItem, UserRole userRole) throws NoPermissionException {
         Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("Item not found"));
 
-        System.out.println(updatedItem);
+        System.out.println("this is the item  : " + updatedItem);
 
         if (userRole == UserRole.ROLE_LEADER) {
             if (!oldItem.getDueDate().equals(updatedItem.getDueDate()) ||

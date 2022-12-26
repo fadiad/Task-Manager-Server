@@ -30,7 +30,7 @@ public class ItemController {
     }
 
     @PutMapping(value = "/item-update/{itemId}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ItemDTO> updateItem(@PathVariable("itemId") int itemId,@RequestBody Item updatedItem) {
+    public ResponseEntity<ItemDTO> updateItem(@PathVariable("itemId") int itemId, @RequestBody Item updatedItem) {
         UserRole userRole = UserRole.ROLE_ADMIN;
 
         try {
