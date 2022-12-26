@@ -14,5 +14,7 @@ import java.util.Map;
 public class BoardDetailsDTO{
     private Board board;
     private Map<Integer,List<ItemDTO>> itemFilteredByStatus;
-
+    public void setBoard(Board board) {
+        this.board = board;
+    }
 }
