@@ -46,6 +46,18 @@ public class User {
     private boolean emailNotification;
     private boolean popUpNotification;
 
+    public void setNotificationTypes(Set<NotificationTypes> notificationTypes) {
+        this.notificationTypes = notificationTypes;
+    }
+
+    public void setEmailNotification(boolean emailNotification) {
+        this.emailNotification = emailNotification;
+    }
+
+    public void setPopUpNotification(boolean popUpNotification) {
+        this.popUpNotification = popUpNotification;
+    }
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_board",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -65,4 +77,11 @@ public class User {
         this.userRole = userRole;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

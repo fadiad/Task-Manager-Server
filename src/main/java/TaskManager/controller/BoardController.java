@@ -1,13 +1,13 @@
 package TaskManager.controller;
 
 import TaskManager.entities.Board;
-import TaskManager.entities.Item;
 import TaskManager.entities.TaskStatus;
 import TaskManager.entities.requests.BoardRequest;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
 import TaskManager.entities.responseEntities.BoardToReturn;
 import TaskManager.repository.BoardRepository;
 import TaskManager.service.BoardService;
+import TaskManager.service.NotificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +22,7 @@ public class BoardController {
 
     private final BoardService boardService;
     private final BoardRepository boardRepository;
+    private  final NotificationService notificationService;
 
     @PostMapping(value = "/board-create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<BoardToReturn> createBoard(@RequestBody Board board, @RequestParam int userId) {
@@ -57,8 +58,13 @@ public class BoardController {
     }
 
     @PostMapping(value = "/add-itemType/{boardId}", consumes = "application/json", produces = "application/json")
-    public Item addItemType(@RequestBody BoardRequest boardRequest) {
+    public ResponseEntity<Board> addItemType(@PathVariable("boardId") int boardId, @RequestBody BoardRequest boardRequest) {
         System.out.println(boardRequest);
-        return null;
+        return new ResponseEntity<>(boardService.addItemTypeOnBoard(boardId, boardRequest.getType()), HttpStatus.OK);
+    }
+    @PutMapping(value = "/updateItemStatus/{boardId}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Board> updateItemStatus(@PathVariable("boardId") int boardId,@RequestParam int itemId, @RequestBody TaskStatus taskStatus) {
+
+        return new ResponseEntity<>(boardService.updateItemStatusToBoard(boardId, itemId ,taskStatus), HttpStatus.OK);
     }
 }

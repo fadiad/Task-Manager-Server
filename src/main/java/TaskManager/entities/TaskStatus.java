@@ -19,6 +19,10 @@ public class TaskStatus {
 
     private String name;
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")

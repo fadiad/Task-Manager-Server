@@ -10,14 +10,14 @@ public class EmailNotification {
     private static final String from = "graychairs1982@gmail.com";
     private static final Properties properties = System.getProperties();
 
-    Session session = Session.getInstance(properties, new Authenticator() {
+    static Session session = Session.getInstance(properties, new Authenticator() {
         protected PasswordAuthentication getPasswordAuthentication() {
             System.out.println();
             return new PasswordAuthentication("apikey", properties.getProperty("spring.mail.password"));
         }
     });
 
-    private MimeMessage prepare() {
+    private static MimeMessage prepare() {
         String host = "smtp.sendgrid.net";
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", "465");
@@ -29,7 +29,7 @@ public class EmailNotification {
         return new MimeMessage(session);
     }
 
-    public void sendEmailNotification(String mail, String text) { // The function that send the notification
+    public static void sendEmailNotification(String mail, String text) { // The function that send the notification
         to = mail;
         MimeMessage message = prepare();
 
@@ -41,7 +41,7 @@ public class EmailNotification {
         }
     }
 
-    private void prepareThisMessage(MimeMessage message, String messageText) throws MessagingException {
+    private static void prepareThisMessage(MimeMessage message, String messageText) throws MessagingException {
         message.setFrom(new InternetAddress(from));
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
         message.setSubject("Hello, this is a massage from Trello application");

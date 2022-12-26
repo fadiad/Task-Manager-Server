@@ -39,4 +39,11 @@ public class AuthService implements UserDetailsService {
         return userRepository.findByEmail(email).map(SecurityUser::new)
                 .orElseThrow(() -> new UsernameNotFoundException("bad credentials"));
     }
+
+    public boolean notExist(String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            return false;
+        }
+        return true;
+    }
 }
