@@ -43,7 +43,7 @@ public class BoardControllerTest {
     @DisplayName("Trying to create board successfully")
     void create_board_successfully() {
         BoardToReturn boardToReturn = new BoardToReturn(1, "title");
-        given(boardService.addNewBoard(goodBoard, 1)).willReturn(boardToReturn);;
+        given(boardService.addNewBoard(goodBoard, 1)).willReturn(boardToReturn);
         assertEquals(201, boardController.createBoard(goodBoard, 1).getStatusCodeValue(), "create board successfully");
     }
     @Test

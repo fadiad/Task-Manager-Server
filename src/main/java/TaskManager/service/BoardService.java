@@ -28,7 +28,7 @@ public class BoardService {
 
     //TODO done
     @Transactional
-    public void deleteStatus(int boardId, TaskStatus status) {
+        public void deleteStatus(int boardId, TaskStatus status) {
         System.out.println("status : " + status);
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
         boolean removedStatus = board.getStatues().remove(status);
