@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
-import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +25,6 @@ public class Item {
     private int id;
     private int boardId;
 
-    @Pattern(regexp = "^[a-zA-Z0-9]+$")
     private String title;
 
     private String Description;
@@ -51,7 +49,7 @@ public class Item {
     private int importance;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<Comment> statues=new HashSet<>();
+    private Set<Comment> statues=new HashSet<>(); //THE LIST OG THE COMMENT
 
     public void setItem(Item newItem){
         this.importance =newItem.getImportance();

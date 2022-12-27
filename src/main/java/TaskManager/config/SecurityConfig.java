@@ -3,6 +3,7 @@ package TaskManager.config;
 
 import TaskManager.filters.JWTAuthenticationFilter;
 import TaskManager.filters.PermissionFilter;
+import TaskManager.service.PermissionService;
 import TaskManager.utils.jwtUtils.JWTTokenHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,8 @@ public class SecurityConfig {
     @Autowired
     private  final AuthenticationEntryPoint authenticationEntryPoint;
 
+    private final PermissionService permissionService;
+
     @Bean
     public AuthenticationManager authManager() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -56,7 +59,7 @@ public class SecurityConfig {
                 .and().authorizeRequests((request) -> request.antMatchers( "/auth/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll().anyRequest().authenticated())
                 .addFilterBefore(new JWTAuthenticationFilter(myUserDetailsService, jWTTokenHelper), UsernamePasswordAuthenticationFilter.class).
-                 addFilterAfter(new PermissionFilter(requestMappingHandlerMapping()), JWTAuthenticationFilter.class);
+                 addFilterAfter(new PermissionFilter(requestMappingHandlerMapping(),permissionService), JWTAuthenticationFilter.class);
         http.csrf().disable().cors().and().headers().frameOptions().disable();
         return http.build();
     }

@@ -24,7 +24,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-
     @Column(unique = true)
     private String username;
 
@@ -43,6 +42,18 @@ public class User {
 
     private boolean emailNotification;
     private boolean popUpNotification;
+
+    public void setNotificationTypes(Set<NotificationTypes> notificationTypes) {
+        this.notificationTypes = notificationTypes;
+    }
+
+    public void setEmailNotification(boolean emailNotification) {
+        this.emailNotification = emailNotification;
+    }
+
+    public void setPopUpNotification(boolean popUpNotification) {
+        this.popUpNotification = popUpNotification;
+    }
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_board",
@@ -63,7 +74,13 @@ public class User {
         this.userRole = userRole;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     @Override
     public String toString() {
@@ -71,12 +88,7 @@ public class User {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", userRole=" + userRole +
-                ", notificationTypes=" + notificationTypes +
-                ", emailNotification=" + emailNotification +
-                ", popUpNotification=" + popUpNotification +
-                ", boards=" + boards +
                 '}';
     }
 }

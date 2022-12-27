@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class Test {
     @GetMapping(value ="/{id}")
-    public void getBoardById(@PathVariable("id") int id, @RequestParam int s){
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    public void getBoardById(@PathVariable("id") int id, @RequestParam int boardId){
         System.out.println("all allowed here ");
     }
 

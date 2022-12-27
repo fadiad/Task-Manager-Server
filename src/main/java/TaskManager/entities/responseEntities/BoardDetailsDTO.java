@@ -12,7 +12,13 @@ import java.util.Map;
 @NoArgsConstructor
 @Getter
 public class BoardDetailsDTO{
+
     private Board board;
     private Map<Integer,List<ItemDTO>> itemFilteredByStatus;
+    private List<UserDTO> usersOnBoard ;
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
 
 }

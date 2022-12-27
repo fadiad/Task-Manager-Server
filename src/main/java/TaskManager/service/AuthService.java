@@ -3,6 +3,7 @@ package TaskManager.service;
 import TaskManager.entities.SecurityUser;
 import TaskManager.entities.User;
 import TaskManager.entities.entitiesUtils.UserRole;
+import TaskManager.entities.responseEntities.UserDTO;
 import TaskManager.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,4 +40,10 @@ public class AuthService implements UserDetailsService {
         return userRepository.findByEmail(email).map(SecurityUser::new)
                 .orElseThrow(() -> new UsernameNotFoundException("bad credentials"));
     }
+
+    public UserDTO signUpGitUser(User user) {
+        Optional<User> fetchedUser = userRepository.findByEmail(user.getEmail());
+        return fetchedUser.map(UserDTO::new).orElseGet(() -> new UserDTO(userRepository.save(user)));
+    }
+
 }
