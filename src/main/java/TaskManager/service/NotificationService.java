@@ -5,7 +5,6 @@ import TaskManager.entities.Board;
 import TaskManager.entities.Item;
 import TaskManager.entities.User;
 import TaskManager.entities.entitiesUtils.NotificationTypes;
-import TaskManager.entities.requests.NotificationRequest;
 import TaskManager.repository.BoardRepository;
 import TaskManager.repository.ItemRepository;
 import TaskManager.repository.UserRepository;
@@ -16,8 +15,6 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Set;
 
 import static TaskManager.entities.entitiesUtils.NotificationTypes.*;
-import static TaskManager.entities.entitiesUtils.Ways.EMAIL;
-import static TaskManager.entities.entitiesUtils.Ways.POP_UP;
 
 @Service
 @AllArgsConstructor
@@ -75,13 +72,4 @@ public class NotificationService {
 
     }
 
-    public void notificationSetting(int userId, NotificationRequest notificationRequest) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
-        System.out.println(user.getUsername());
-        user.setEmailNotification(notificationRequest.getWays().contains(EMAIL));
-        user.setPopUpNotification(notificationRequest.getWays().contains(POP_UP));
-        Set<NotificationTypes> types = notificationRequest.getOption();
-        user.setNotificationTypes(types);
-        userRepository.save(user);
-    }
 }

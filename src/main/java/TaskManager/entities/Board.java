@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,13 +27,13 @@ public class Board {
 
     private String title;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "ItemTypes", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "ItemTypes", nullable = false)
     private Set<ItemTypes> itemTypes =new HashSet<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "board_users_roles", joinColumns = @JoinColumn(name = "board_id"))
     @MapKeyColumn(name = "user_id")
@@ -48,4 +47,12 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<TaskStatus> statues=new HashSet<>();
 
+    @Override
+    public String toString() {
+        return "Board{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", statues=" + statues +
+                '}';
+    }
 }

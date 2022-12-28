@@ -17,30 +17,30 @@ public class GitService {
         String Link = "https://github.com/login/oauth/access_token?";
 
         String linkGetToken = Link + "client_id=" + client_id + "&client_secret=" + client_secret + "&code=" + code;
-        ResponseEntity<TokenResponse> result = getTokenFromCodeFunction(linkGetToken);
+        TokenResponse result = getTokenFromCodeFunction(linkGetToken);
 
-        return result.getBody().getAccess_token();
+        return result.getAccess_token();
     }
 
-    public ResponseEntity<GitUser> getDetailsFromToken(@RequestParam String token) {
+    public GitUser getDetailsFromToken(@RequestParam String token) {
         String linkForName = "https://api.github.com/user"; //out from function
         return getDetailsFromTokenFunction(linkForName, token);
     }
 
-    public static ResponseEntity<TokenResponse> getTokenFromCodeFunction(String link) {  //send link return response
+    public static TokenResponse getTokenFromCodeFunction(String link) {  //send link return response
         ResponseEntity<TokenResponse> response = null;
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
         try {
-            return restTemplate.exchange(link, HttpMethod.POST, entity, TokenResponse.class);
+            return restTemplate.exchange(link, HttpMethod.POST, entity, TokenResponse.class).getBody();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong!!");
         }
     }
 
-    public static ResponseEntity<GitUser> getDetailsFromTokenFunction(String link, String bearerToken) {
+    public static GitUser getDetailsFromTokenFunction(String link, String bearerToken) {
         ResponseEntity<GitUser> response = null;
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -53,7 +53,7 @@ public class GitService {
             System.out.println(gitUser.getName());
             System.out.println(gitUser.getEmail());
 
-            return ResponseEntity.ok(gitUser);
+            return gitUser;
         } catch (Exception e) {
             System.out.println("error to get details from git" + e);
         }

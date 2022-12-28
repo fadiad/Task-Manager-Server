@@ -2,9 +2,7 @@ package TaskManager.controller;
 
 import TaskManager.entities.Comment;
 import TaskManager.entities.Item;
-
 import TaskManager.entities.entitiesUtils.FilterItem;
-
 import TaskManager.entities.entitiesUtils.UserRole;
 import TaskManager.entities.responseEntities.ItemDTO;
 import TaskManager.service.ItemService;
@@ -14,28 +12,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
 import javax.naming.NoPermissionException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
 @RestController
 @RequestMapping("/item")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class ItemController {
 
     private final ItemService itemService;
     private final NotificationService notificationService;
 
     @PostMapping(value = "/item-create", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ItemDTO> addNewItem(@RequestBody Item newItem) {
-
-        System.out.println(newItem.getStatusId() + " " + newItem.getBoardId());
-        return new ResponseEntity<ItemDTO>(itemService.addNewItem(newItem), HttpStatus.CREATED);
+    public ResponseEntity<ItemDTO> addNewItem(@RequestParam int boardId,@RequestBody Item newItem) {
+        return new ResponseEntity<ItemDTO>(itemService.addNewItem(newItem,boardId), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/item-update", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ItemDTO> updateItem(@RequestParam int itemId, @RequestBody Item updatedItem) {
-        UserRole userRole = UserRole.ROLE_ADMIN;
+    public ResponseEntity<ItemDTO> updateItem(HttpServletRequest request, @RequestParam int itemId, @RequestBody Item updatedItem) {
+        UserRole userRole = (UserRole) request.getAttribute("role");
         try {
             return new ResponseEntity<>(itemService.updateItem(itemId, updatedItem, userRole), HttpStatus.OK);
         } catch (NoPermissionException e) {
@@ -46,8 +45,6 @@ public class ItemController {
 
     @PutMapping(value = "/item-assignTO", produces = "application/json")
     public ResponseEntity<ItemDTO> assignItemTo(@RequestParam int itemId, @RequestParam int userId, @RequestParam int boardId) {
-
-        System.out.println(boardId);
         ResponseEntity<ItemDTO> result = new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
         notificationService.itemAssignedToMe(itemId, userId, boardId); //send notification
         return result;
@@ -60,8 +57,8 @@ public class ItemController {
     }
 
     @PostMapping(value = "/add-comment")
-    public void addComment(@RequestParam int itemId, @RequestBody Comment comment) {
-        int userId=1;
+    public void addComment(HttpServletRequest request,@RequestParam int itemId, @RequestBody Comment comment) {
+        int userId= (int) request.getAttribute("userId");
         Comment comment1 = itemService.addComment(itemId, userId , comment);
         notificationService.commentAdded(userId);
     }

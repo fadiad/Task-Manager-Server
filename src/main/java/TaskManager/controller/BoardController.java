@@ -5,6 +5,7 @@ import TaskManager.entities.TaskStatus;
 import TaskManager.entities.requests.BoardRequest;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
 import TaskManager.entities.responseEntities.BoardToReturn;
+import TaskManager.entities.responseEntities.UserDTO;
 import TaskManager.repository.BoardRepository;
 import TaskManager.service.BoardService;
 import TaskManager.service.NotificationService;
@@ -13,11 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/board")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class BoardController {
 
     private final BoardService boardService;
@@ -25,22 +27,22 @@ public class BoardController {
     private  final NotificationService notificationService;
 
     @PostMapping(value = "/board-create", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<BoardToReturn> createBoard(@RequestBody Board board, @RequestParam int userId) {
-        return new ResponseEntity<>(boardService.addNewBoard(board, userId), HttpStatus.CREATED);
+    public ResponseEntity<BoardToReturn> createBoard(HttpServletRequest request,@RequestBody Board board) {
+        int userId= (int) request.getAttribute("userId");
+        return new ResponseEntity<>(boardService.addNewBoard(board,userId), HttpStatus.CREATED);
     }
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<BoardDetailsDTO> getBoardById(@RequestParam int boardId) {
-        int userId = 1;
+    public ResponseEntity<BoardDetailsDTO> getBoardById(HttpServletRequest request,@RequestParam int boardId) {
+        int userId= (int) request.getAttribute("userId");
         return new ResponseEntity<>(boardService.getBoardById(boardId, userId), HttpStatus.OK);
     }
 
 
 
-    @PutMapping(value = "/delete-statues")
-    public ResponseEntity<Board> removeStatuses(@RequestParam int boardId, @RequestBody TaskStatus status) {
-        System.out.println(status);
-        boardService.deleteStatus(boardId, status);
+    @DeleteMapping(value = "/delete-statues")
+    public ResponseEntity<Board> removeStatuses(@RequestParam int boardId, @RequestParam int statusId) {
+        boardService.deleteStatus(boardId, statusId);
         return ResponseEntity.noContent().build();
     }
 
@@ -63,5 +65,10 @@ public class BoardController {
     public ResponseEntity<Board> updateItemStatus(@RequestParam int boardId,@RequestParam int itemId, @RequestBody TaskStatus taskStatus) {
 
         return new ResponseEntity<>(boardService.updateItemStatusToBoard(boardId, itemId ,taskStatus), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/shareBoard")
+    public ResponseEntity<UserDTO> shareBoardByUserId(@RequestParam int boardId, @RequestParam String email) {
+        return new ResponseEntity<>(boardService.shareBoard(boardId, email), HttpStatus.OK);
     }
 }

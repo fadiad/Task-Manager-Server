@@ -2,16 +2,15 @@ package TaskManager.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/test")
 @AllArgsConstructor
 public class Test {
-    @GetMapping(value = "/hihi",produces = "application/json")
-    public void getBoardById(){
+    @GetMapping(value ="/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    public void getBoardById(@PathVariable("id") int id, @RequestParam int boardId){
         System.out.println("all allowed here ");
     }
 

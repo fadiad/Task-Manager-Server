@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,17 +15,12 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @Table(name = "user")
-@Transactional
 @Getter
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     @Column(unique = true)
     private String username;
@@ -40,7 +32,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_notification", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "notificationType", nullable = false)
@@ -86,5 +78,15 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", userRole=" + userRole +
+                '}';
     }
 }
