@@ -55,7 +55,7 @@ public class Board {
                 ", statues=" + statues +
                 '}';
     }
-    public static Board createNewBoard(String title) {
+    public Board createNewBoard(String title) {
         Board board = new Board();
         board.setTitle(title);
         return board;

@@ -3,34 +3,28 @@ package Controller;
 import TaskManager.controller.BoardController;
 import TaskManager.entities.Board;
 import TaskManager.entities.TaskStatus;
-import TaskManager.entities.entitiesUtils.ItemTypes;
 import TaskManager.entities.requests.BoardRequest;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
 import TaskManager.entities.responseEntities.BoardToReturn;
 import TaskManager.entities.responseEntities.UserDTO;
 import TaskManager.service.BoardService;
 import TaskManager.service.UserService;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 import java.util.Collections;
 
 import static TaskManager.entities.entitiesUtils.ItemTypes.BUG;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,9 +46,10 @@ public class BoardControllerTest {
     @BeforeEach
     @DisplayName("Make sure all the correct parameters are refreshed after each operation")
     void setUp() {
-        goodBoard = new Board();
-        goodBoard.setTitle("title");
-        goodBoard.setId(1);
+//        goodBoard = new Board();
+//        goodBoard.setTitle("title");
+//        goodBoard.setId(1);
+//        Board goodBoardd = Board.createBoard("new Board");
     }
 
     @Test
@@ -204,10 +199,8 @@ public class BoardControllerTest {
         int boardId = 1;
         BoardRequest boardRequest = new BoardRequest();
         boardRequest.setType(Collections.singleton(BUG));
-
         // Set up the mock behavior
         doThrow(new IllegalArgumentException("Board not found")).when(boardService).addItemTypeOnBoard(boardId, Collections.singleton(BUG));
-
         // Invoke the method under test
         assertThrows(IllegalArgumentException.class, () -> boardController.addItemType(boardId, boardRequest));
     }
