@@ -26,6 +26,7 @@ import java.security.spec.InvalidKeySpecException;
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -40,11 +41,12 @@ public class AuthController {
     private final GitService gitService;
 
 
-    @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/login_User", consumes = "application/json", produces = "application/json")
     public ResponseEntity<LoginData> login(@RequestBody LoginRequest credentials) {
         if(!Validations.isEmailRegexValid(credentials.getEmail())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid email");
         }
+
         try {
             final Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);

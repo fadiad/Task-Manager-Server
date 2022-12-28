@@ -6,17 +6,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.transaction.Transactional;
 import java.util.Set;
 
 
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
+@Transactional
 public class UserDTO {
 
     private int id;
     private String username;
     private String email;
+
     private Set<NotificationTypes> notificationTypes;
 
     public UserDTO(User user){

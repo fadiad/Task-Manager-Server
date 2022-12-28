@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +15,6 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @Table(name = "user")
-@Transactional
 @Getter
 public class User {
 
@@ -34,7 +32,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_notification", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "notificationType", nullable = false)

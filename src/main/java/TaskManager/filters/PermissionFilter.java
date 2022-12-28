@@ -1,6 +1,7 @@
 package TaskManager.filters;
 
 import TaskManager.entities.SecurityUser;
+import TaskManager.entities.entitiesUtils.UserRole;
 import TaskManager.service.PermissionService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -23,7 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Collections;
 
 @Order(2)
 @Component
@@ -44,26 +45,30 @@ public class PermissionFilter extends OncePerRequestFilter implements Ordered {
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(!request.getRequestURI().startsWith("/auth")) {
 
-        try {
-           HandlerExecutionChain handler= requestMappingHandlerMapping.getHandler(request);
-           Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-           if(handler != null){
-               HandlerMethod handlerMethod = (HandlerMethod) handler.getHandler();
-               if(handlerMethod.hasMethodAnnotation(PreAuthorize.class)) {
-                  int boardId = Integer.parseInt(request.getParameter("boardId"));
-                   SecurityUser securityUser=(SecurityUser) authentication.getPrincipal();
-                   Collection<? extends GrantedAuthority> authorities = permissionService.getUserPermission(boardId, securityUser.getUser().getId());
-                   authentication = new UsernamePasswordAuthenticationToken(securityUser, null,authorities);
-                   SecurityContextHolder.getContext().setAuthentication(authentication);
-               }
+            try {
+                HandlerExecutionChain handler = requestMappingHandlerMapping.getHandler(request);
+                if (handler != null && handler.getHandler() instanceof HandlerMethod) {
+                    HandlerMethod handlerMethod = (HandlerMethod) handler.getHandler();
+                    if (handlerMethod.hasMethodAnnotation(PreAuthorize.class)) {
+                        int boardId = Integer.parseInt(request.getParameter("boardId"));
+                        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+                        UserRole authority = permissionService.getUserPermission(boardId, securityUser.getUser().getId());
+                        authentication = new UsernamePasswordAuthenticationToken(securityUser, null,Collections.singletonList(new SimpleGrantedAuthority(authority.name())));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        request.setAttribute("boardId",boardId);
+                        request.setAttribute("role",authority);
+                    }
 
-           }
+                }
 
-        }catch(NumberFormatException e){
-            throw new IllegalArgumentException("Messing args");
-        }catch (Exception e) {
-            throw new RuntimeException(e);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Messing args");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         filterChain.doFilter(request, response);
     }

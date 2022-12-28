@@ -1,5 +1,6 @@
 package TaskManager.filters;
 
+import TaskManager.entities.SecurityUser;
 import TaskManager.utils.jwtUtils.JWTTokenHelper;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
@@ -35,36 +36,38 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter implements Ord
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authToken = jwtTokenHelper.getToken(request);
-        System.out.println("how are you in filter 1");
+        if(!request.getRequestURI().contains("/auth")) {
+            String authToken = jwtTokenHelper.getToken(request);
 
-        if (null != authToken) {
+            if (null != authToken) {
 
-            String userName = jwtTokenHelper.getUsernameFromToken(authToken);
+                String userName = jwtTokenHelper.getUsernameFromToken(authToken);
 
-            if (null != userName) {
+                if (null != userName) {
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
 
-                if (jwtTokenHelper.validateToken(authToken, userDetails)) {
-                    System.out.println("xxxxxxxx");
+                    if (jwtTokenHelper.validateToken(authToken, userDetails)) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        request.setAttribute("userId",((SecurityUser)userDetails).getUser().getId());
+                    } else {
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                        return;
+                    }
 
-                    System.out.println("how are you in filter 1");
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
+                }else {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
 
-            } else {
+            }else {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
         }
-
 
         filterChain.doFilter(request, response);
 

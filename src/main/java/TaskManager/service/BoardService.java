@@ -1,6 +1,9 @@
 package TaskManager.service;
 
-import TaskManager.entities.*;
+import TaskManager.entities.Board;
+import TaskManager.entities.Item;
+import TaskManager.entities.TaskStatus;
+import TaskManager.entities.User;
 import TaskManager.entities.entitiesUtils.ItemTypes;
 import TaskManager.entities.entitiesUtils.UserRole;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
@@ -15,7 +18,10 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,15 +33,16 @@ public class BoardService {
     private final UserRepository userRepository;
 
     //TODO done
-    @Transactional
-        public void deleteStatus(int boardId, TaskStatus status) {
-        System.out.println("status : " + status);
+        @Transactional
+        public void deleteStatus(int boardId, int statusId) {
+
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
-        boolean removedStatus = board.getStatues().remove(status);
-        if (!removedStatus) {
+        Optional<TaskStatus> deletedStatus=board.getStatues().stream().filter(taskStatus -> taskStatus.getId() ==statusId).findFirst();
+        if (!deletedStatus.isPresent()) {
             throw new IllegalArgumentException("This status is not on this board");
         }
-        itemRepository.deleteByStatusId(status.getId());
+        board.getStatues().remove(deletedStatus.get());
+        itemRepository.deleteByStatusId(statusId);
     }
 
     //TODO  this is done
@@ -52,6 +59,7 @@ public class BoardService {
     }
 
     //TODO  this is done
+    @Transactional
     public BoardDetailsDTO getBoardById(int boardId, int userId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("no board found"));
         if (!board.getUsersRoles().containsKey(userId)) {
@@ -72,9 +80,8 @@ public class BoardService {
         return allItems.stream().filter(item -> item.getStatusId() == statusId).map(ItemDTO::new).collect(Collectors.toList());
     }
 
-    //TODO  this is done
+    @Transactional
     public List<BoardToReturn> getUserBoards(int userId) {
-        System.out.println(userId);
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         return user.getBoards().stream()
@@ -87,6 +94,7 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
         taskStatus.setBoard(board);
         board.getStatues().add(taskStatus);
+        System.out.println(boardRepository.save(board));
         return boardRepository.save(board);
     }
 
@@ -135,5 +143,16 @@ public class BoardService {
             }
         }
         throw new IllegalArgumentException("STATUS NOT FOUND");
+    }
+    @Transactional
+    public UserDTO shareBoard(int boardId, String email) {
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("user not found"));
+        if(board.getUsersRoles().containsKey(user.getId())){
+            throw new IllegalArgumentException("user already exist un the board");
+        }
+        board.getUsersOnBoard().add(user);
+        user.getBoards().add(board);
+        return new UserDTO(userRepository.save(user));
     }
 }

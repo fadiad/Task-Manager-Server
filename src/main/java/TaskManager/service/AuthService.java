@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -20,7 +21,7 @@ public class AuthService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
+    @Transactional
     public void addUser(User user) {
         Optional<User> fetchedUser = userRepository.findByEmail(user.getEmail());
         if (fetchedUser.isPresent()) {
@@ -36,11 +37,12 @@ public class AuthService implements UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email).map(SecurityUser::new)
                 .orElseThrow(() -> new UsernameNotFoundException("bad credentials"));
     }
-
+    @Transactional
     public UserDTO signUpGitUser(User user) {
         Optional<User> fetchedUser = userRepository.findByEmail(user.getEmail());
         return fetchedUser.map(UserDTO::new).orElseGet(() -> new UserDTO(userRepository.save(user)));

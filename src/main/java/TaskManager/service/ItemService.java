@@ -35,13 +35,13 @@ public class ItemService {
         return itemRepository.findAll(queryBuilder).stream().map(ItemDTO::new).collect(Collectors.toList());
     }
 
-    //TODO DONE
-    public ItemDTO addNewItem(Item newItem) {
+    @Transactional
+    public ItemDTO addNewItem(Item newItem,int boardId) {
         System.out.println("new item : " + newItem);
 
         User createUser = userRepository.findById(newItem.getCreator().getId()).orElseThrow(() -> new IllegalArgumentException("User not found !"));
 
-        Board board = boardRepository.findById(newItem.getBoardId()).orElseThrow(() -> new IllegalArgumentException("Board is not existed !"));
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("Board is not existed !"));
 
         boolean setExistedOnBoard = board.getStatues().stream().anyMatch(status -> status.getId() == newItem.getStatusId());
 
