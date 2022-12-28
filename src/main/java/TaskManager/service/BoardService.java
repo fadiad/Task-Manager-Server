@@ -60,7 +60,7 @@ public class BoardService {
 
     //TODO  this is done
     @Transactional
-    public BoardDetailsDTO getBoardById(int boardId, int userId) {
+    public BoardDetailsDTO  getBoardById(int boardId, int userId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("no board found"));
         if (!board.getUsersRoles().containsKey(userId)) {
             throw new IllegalArgumentException("this user not on board");

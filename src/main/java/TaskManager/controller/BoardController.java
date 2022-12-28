@@ -23,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 public class BoardController {
 
     private final BoardService boardService;
-    private final BoardRepository boardRepository;
-    private  final NotificationService notificationService;
 
     @PostMapping(value = "/board-create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<BoardToReturn> createBoard(HttpServletRequest request,@RequestBody Board board) {
