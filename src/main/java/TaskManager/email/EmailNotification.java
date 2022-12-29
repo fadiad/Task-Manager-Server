@@ -13,7 +13,7 @@ public class EmailNotification {
     static Session session = Session.getInstance(properties, new Authenticator() {
         protected PasswordAuthentication getPasswordAuthentication() {
             System.out.println();
-            return new PasswordAuthentication("apikey", properties.getProperty("spring.mail.password"));
+            return new PasswordAuthentication("apikey", properties.getProperty("Aa123456789!"));
         }
     });
 

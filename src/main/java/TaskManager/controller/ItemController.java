@@ -10,6 +10,7 @@ import TaskManager.service.NotificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,11 +28,13 @@ public class ItemController {
     private final ItemService itemService;
     private final NotificationService notificationService;
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_LEADER')")
     @PostMapping(value = "/item-create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ItemDTO> addNewItem(@RequestParam int boardId,@RequestBody Item newItem) {
         return new ResponseEntity<ItemDTO>(itemService.addNewItem(newItem,boardId), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_LEADER')")
     @PutMapping(value = "/item-update", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ItemDTO> updateItem(HttpServletRequest request, @RequestParam int itemId, @RequestBody Item updatedItem) {
         UserRole userRole = (UserRole) request.getAttribute("role");
@@ -42,13 +45,13 @@ public class ItemController {
         }
     }
 
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_LEADER')")
     @PutMapping(value = "/item-assignTO", produces = "application/json")
     public ResponseEntity<ItemDTO> assignItemTo(@RequestParam int itemId, @RequestParam int userId, @RequestParam int boardId) {
         notificationService.itemAssignedToMe(itemId, userId, boardId); //send notification
         return new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/item-delete")
     public ResponseEntity<String> deleteItem(@RequestParam  int itemId,@RequestParam int boardId) {
         //notificationService.itemDeleted(itemId);

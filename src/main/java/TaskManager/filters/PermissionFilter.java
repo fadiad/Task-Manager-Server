@@ -54,10 +54,14 @@ public class PermissionFilter extends OncePerRequestFilter implements Ordered {
                     HandlerMethod handlerMethod = (HandlerMethod) handler.getHandler();
                     if (handlerMethod.hasMethodAnnotation(PreAuthorize.class)) {
                         int boardId = Integer.parseInt(request.getParameter("boardId"));
+
                         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
                         UserRole authority = permissionService.getUserPermission(boardId, securityUser.getUser().getId());
+                        System.out.println(authority);
+
                         authentication = new UsernamePasswordAuthenticationToken(securityUser, null,Collections.singletonList(new SimpleGrantedAuthority(authority.name())));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
+                        System.out.println("kgaledwani");
                         request.setAttribute("boardId",boardId);
                         request.setAttribute("role",authority);
                     }

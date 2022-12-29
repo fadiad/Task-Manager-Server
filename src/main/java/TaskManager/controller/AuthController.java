@@ -5,7 +5,7 @@ import TaskManager.entities.entitiesUtils.Validations;
 import TaskManager.entities.responseEntities.UserDTO;
 import TaskManager.service.AuthService;
 import TaskManager.service.GitService;
-import TaskManager.utils.emailUtils.EmailActivationFacade;
+import TaskManager.utils.emailUtils.EmailSenderFacade;
 import TaskManager.utils.jwtUtils.JWTTokenHelper;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import java.security.spec.InvalidKeySpecException;
 public class AuthController {
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
-    private final EmailActivationFacade emailActivationFacade;
+    private final EmailSenderFacade emailSenderFacade;
 
     private final AuthService authService;
 

@@ -148,6 +148,7 @@ public class BoardService {
             throw new IllegalArgumentException("user already exist un the board");
         }
         board.getUsersOnBoard().add(user);
+        board.getUsersRoles().put(user.getId(), UserRole.ROLE_USER);
         user.getBoards().add(board);
         return new UserDTO(userRepository.save(user));
     }

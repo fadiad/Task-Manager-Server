@@ -14,7 +14,7 @@ public class Test {
         System.out.println("all allowed here ");
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/hi",produces = "application/json")
     public void hi(){
         System.out.println("all allowed here ");
