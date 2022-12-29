@@ -24,7 +24,7 @@ public class TaskStatus {
     }
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
 

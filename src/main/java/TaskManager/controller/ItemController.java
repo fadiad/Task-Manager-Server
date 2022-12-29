@@ -45,9 +45,9 @@ public class ItemController {
 
     @PutMapping(value = "/item-assignTO", produces = "application/json")
     public ResponseEntity<ItemDTO> assignItemTo(@RequestParam int itemId, @RequestParam int userId, @RequestParam int boardId) {
-        ResponseEntity<ItemDTO> result = new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
-        notificationService.itemAssignedToMe(itemId, userId, boardId); //send notification
-        return result;
+//        ResponseEntity<ItemDTO> result = new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
+//        notificationService.itemAssignedToMe(itemId, userId, boardId); //send notification
+        return  new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/item-delete")

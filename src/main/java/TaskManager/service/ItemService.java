@@ -59,6 +59,7 @@ public class ItemService {
     }
 
     //TODO DONE
+    @Transactional
     public ItemDTO assignItemTo(int itemId, int userId, int boardId) {
 
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("Board not found"));
@@ -77,7 +78,8 @@ public class ItemService {
         return new ItemDTO(itemRepository.save(itemToAssign));
     }
 
-    //TODO DONE
+
+    @Transactional
     public ItemDTO updateItem(int itemId, Item updatedItem, UserRole userRole) throws NoPermissionException {
         Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("Item not found"));
 

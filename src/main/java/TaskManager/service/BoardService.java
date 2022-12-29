@@ -15,6 +15,7 @@ import TaskManager.repository.ItemRepository;
 import TaskManager.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -33,11 +34,11 @@ public class BoardService {
     private final UserRepository userRepository;
 
     //TODO done
-        @Transactional
-        public void deleteStatus(int boardId, int statusId) {
+    @Transactional
+    public void deleteStatus(int boardId, int statusId) {
 
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
-        Optional<TaskStatus> deletedStatus=board.getStatues().stream().filter(taskStatus -> taskStatus.getId() ==statusId).findFirst();
+        Optional<TaskStatus> deletedStatus = board.getStatues().stream().filter(taskStatus -> taskStatus.getId() == statusId).findFirst();
         if (!deletedStatus.isPresent()) {
             throw new IllegalArgumentException("This status is not on this board");
         }
@@ -73,7 +74,7 @@ public class BoardService {
 
         Map<Integer, List<ItemDTO>> itemFilteredByStatus = board.getStatues().stream().collect(Collectors.toMap(TaskStatus::getId, taskStatus -> filterItemsByStatus(taskStatus.getId(), allItemsByBoardId)));
 
-        return new BoardDetailsDTO(board, itemFilteredByStatus , useresOnBoard);
+        return new BoardDetailsDTO(board, itemFilteredByStatus, useresOnBoard);
     }
 
     private List<ItemDTO> filterItemsByStatus(int statusId, List<Item> allItems) {
@@ -100,33 +101,32 @@ public class BoardService {
 
     //TODO done
     @Transactional
-    public Board deleteItemTypeOnBoard(int boardId, Set<ItemTypes> typeSet) {
+    public Board deleteItemTypeOnBoard(int boardId, ItemTypes itemType) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
         Set<ItemTypes> types = board.getItemTypes();
         List<Item> items = itemRepository.findByBoardId(boardId);
 
-        for (ItemTypes itemTypes : typeSet) {
-            if (!types.remove(itemTypes))
-                throw new IllegalArgumentException("No such type on this board");
+        if (!types.remove(itemType))
+            throw new IllegalArgumentException("No such type on this board");
 
-              items.forEach(item -> {
-                if (item.getItemType() == itemTypes) {
-                    item.setItemType(null);
-                }
-            });
-        }
-        itemRepository.saveAll(items);
+        items.forEach(item -> {
+            if (item.getItemType() == itemType) {
+                item.setItemType(null);
+            }
+        });
+
+        System.out.println(itemRepository.saveAll(items));
         return boardRepository.save(board);
     }
 
     @Transactional
-    public Board addItemTypeOnBoard(int boardId, Set<ItemTypes> typeSet) {
+    public Board addItemTypeOnBoard(int boardId, ItemTypes itemType) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
-        for (ItemTypes itemTypes : typeSet) {
-            board.getItemTypes().add(itemTypes);
-        }
+
+        System.out.println(board.getItemTypes().add(itemType));
         return boardRepository.save(board);
     }
+
     @Transactional
     public Board updateItemStatusToBoard(int boardId, int itemId, TaskStatus taskStatus) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
@@ -134,8 +134,8 @@ public class BoardService {
         int statusId = item.getStatusId();
         Set<TaskStatus> result = board.getStatues();
 
-        for (TaskStatus task: result) {
-            if(task.getId()==statusId){
+        for (TaskStatus task : result) {
+            if (task.getId() == statusId) {
                 task.setName(taskStatus.getName());
                 itemRepository.save(item);
                 boardRepository.save(board);
@@ -144,11 +144,12 @@ public class BoardService {
         }
         throw new IllegalArgumentException("STATUS NOT FOUND");
     }
+
     @Transactional
     public UserDTO shareBoard(int boardId, String email) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("user not found"));
-        if(board.getUsersRoles().containsKey(user.getId())){
+        if (board.getUsersRoles().containsKey(user.getId())) {
             throw new IllegalArgumentException("user already exist un the board");
         }
         board.getUsersOnBoard().add(user);

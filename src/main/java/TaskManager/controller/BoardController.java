@@ -51,9 +51,9 @@ public class BoardController {
         return new ResponseEntity<>(boardService.addNewStatusToBoard(boardId, taskStatus), HttpStatus.CREATED);
     }
 
-    @DeleteMapping(value = "/delete-itemType", consumes = "application/json", produces = "application/json")
+    @PutMapping(value = "/delete-itemType", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Board> deleteItemType(@RequestParam int boardId, @RequestBody BoardRequest boardRequest) {
-        return new ResponseEntity<>(boardService.deleteItemTypeOnBoard(boardId, boardRequest.getType()), HttpStatus.OK);
+        return new ResponseEntity<>(boardService.deleteItemTypeOnBoard(boardId,boardRequest.getType()), HttpStatus.OK);
     }
 
     @PostMapping(value = "/add-itemType", consumes = "application/json", produces = "application/json")
