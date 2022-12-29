@@ -14,6 +14,12 @@ import javax.transaction.Transactional;
 public class PermissionService {
 
     private final BoardRepository boardRepository;
+
+    /**
+     * @param boardId to find the board
+     * @param userId to find the user
+     * @return the user role and permission if the user in the board.
+     */
     @Transactional
     public UserRole getUserPermission(int boardId, int userId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("no board found"));

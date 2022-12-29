@@ -2,10 +2,7 @@ package TaskManager.entities;
 
 import TaskManager.entities.entitiesUtils.NotificationTypes;
 import TaskManager.entities.entitiesUtils.UserRole;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -16,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name = "user")
 @Getter
+@Setter
 public class User {
 
     @Id

@@ -88,4 +88,22 @@ public class Item {
                 ", Importance=" + importance +
                 '}';
     }
+
+    /**
+     * Static Factory Method
+     */
+    public static Item createItem(int boardId, int statusId, LocalDate dueDate, int importance) {
+        Item item = new Item();
+        item.setBoardId(boardId);
+        item.setStatusId(statusId);
+        item.setDueDate(dueDate);
+        item.setImportance(importance);
+        return item;
+    }
+    public static Item createItem(int boardId, int statusId) {
+        Item item = new Item();
+        item.setBoardId(boardId);
+        item.setStatusId(statusId);
+        return item;
+    }
 }

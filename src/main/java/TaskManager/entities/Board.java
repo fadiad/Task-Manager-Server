@@ -55,4 +55,12 @@ public class Board {
                 ", statues=" + statues +
                 '}';
     }
+    /**
+     * Static Factory Method
+     */
+    public Board createNewBoard(String title) {
+        Board board = new Board();
+        board.setTitle(title);
+        return board;
+    }
 }

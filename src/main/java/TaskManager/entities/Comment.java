@@ -27,6 +27,13 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_fk")
     private Item item;
+
+    public static void createComment(String username) {
+        Comment comment = new Comment();
+        comment.setUsername(username);
+        comment.setDate(LocalDate.now());
+        comment.setTime(LocalTime.now());
+    }
 }
 
 
