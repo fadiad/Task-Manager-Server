@@ -48,15 +48,15 @@ public class Item {
 
     private int importance;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<Comment> statues=new HashSet<>(); //THE LIST OG THE COMMENT
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comment> statues = new HashSet<>(); //THE LIST OG THE COMMENT
 
-    public void setItem(Item newItem){
-        this.importance =newItem.getImportance();
-        this.itemType=newItem.getItemType();
+    public void setItem(Item newItem) {
+        this.importance = newItem.getImportance();
+        this.itemType = newItem.getItemType();
 //        this.parentItem=newItem.getParentItem();
-        this.Description=newItem.getDescription();
-        this.title =newItem.getTitle();
+        this.Description = newItem.getDescription();
+        this.title = newItem.getTitle();
         this.dueDate = newItem.getDueDate();
     }
 
@@ -100,10 +100,14 @@ public class Item {
         item.setImportance(importance);
         return item;
     }
-    public static Item createItem(int boardId, int statusId) {
+
+    public static Item createItem(User createUser, int boardId, int statusId, String title) {
         Item item = new Item();
+
         item.setBoardId(boardId);
         item.setStatusId(statusId);
+        item.setCreator(createUser);
+        item.setTitle(title);
         return item;
     }
 }

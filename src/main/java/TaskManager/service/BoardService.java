@@ -64,11 +64,13 @@ public class BoardService {
     @Transactional
     public BoardToReturn addNewBoard(Board board, int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
-        Board toSave = new Board();
-        toSave.setTitle(board.getTitle());
-        toSave.setItemTypes(board.getItemTypes());
-        toSave.getUsersRoles().put(user.getId(), UserRole.ROLE_ADMIN);
-        toSave.getUsersOnBoard().add(user);
+
+        Board toSave = Board.createNewBoard(
+                board.getTitle(),
+                board.getItemTypes(),
+                user);
+
+
         user.getBoards().add(toSave);
         return new BoardToReturn(boardRepository.save(toSave));
     }
@@ -166,7 +168,7 @@ public class BoardService {
     /**
      * add item types to the board.
      *
-     * @param boardId board id.
+     * @param boardId  board id.
      * @param itemType set of types.
      * @return the new board after changes.
      */

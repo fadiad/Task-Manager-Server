@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
 @Entity
 @Getter
 @Setter
@@ -28,11 +29,14 @@ public class Comment {
     @JoinColumn(name = "item_fk")
     private Item item;
 
-    public static void createComment(String username) {
+    public static Comment createComment(String username) {
         Comment comment = new Comment();
+
         comment.setUsername(username);
         comment.setDate(LocalDate.now());
         comment.setTime(LocalTime.now());
+
+        return comment;
     }
 }
 
