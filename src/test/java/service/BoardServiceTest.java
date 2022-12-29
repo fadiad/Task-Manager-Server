@@ -171,21 +171,17 @@ public class BoardServiceTest {
 
     @Test
     public void testDeleteStatus_BoardNotFound() {
-        // Set up the test data
         int boardId = 1;
         int statusId = 1;
-        // Set up the mock behavior
         when(boardRepository.findById(boardId)).thenReturn(Optional.empty());
-        // Invoke the method under test
         assertThrows(EntityNotFoundException.class, () -> boardService.deleteStatus(boardId, statusId));
-        // Verify the mock interactions
+
         verify(boardRepository).findById(boardId);
         verifyNoMoreInteractions(itemRepository);
     }
 
     @Test
     public void testGetBoardById_Success() {
-        // Set up the test data
         int boardId = 1;
         int userId = 1;
         User user = new User();
@@ -198,29 +194,23 @@ public class BoardServiceTest {
         board.getUsersOnBoard().add(user);
         // Set up the mock behavior
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
-        // Invoke the method under test
         BoardDetailsDTO result = boardService.getBoardById(boardId, userId);
-        // Verify the results
+
         assertEquals(boardId, result.getBoard().getId());
         assertEquals("Test Board", result.getBoard().getTitle());
         assertEquals(1, result.getBoard().getUsersRoles().size());
         assertEquals(UserRole.ROLE_ADMIN, result.getBoard().getUsersRoles().get(userId));
         assertEquals(1, result.getUsersOnBoard().size());
         assertEquals("test@example.com", result.getUsersOnBoard().get(0).getEmail());
-        // Verify the mock interactions
         verify(boardRepository).findById(boardId);
     }
 
     @Test
     public void testGetBoardById_NotFound() {
-        // Set up the test data
         int boardId = 1;
         int userId = 1;
-        // Set up the mock behavior
         when(boardRepository.findById(boardId)).thenReturn(Optional.empty());
-        // Invoke the method under test
         assertThrows(IllegalArgumentException.class, () -> boardService.getBoardById(boardId, userId));
-        // Verify the mock interactions
         verify(boardRepository).findById(boardId);
     }
 }

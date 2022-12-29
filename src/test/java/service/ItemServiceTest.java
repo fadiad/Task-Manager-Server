@@ -14,26 +14,21 @@ import TaskManager.repository.ItemRepository;
 import TaskManager.repository.UserRepository;
 import TaskManager.service.ItemService;
 import TaskManager.utils.filter.QueryBuilder;
-import ch.qos.logback.core.status.Status;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.*;
 
 import static TaskManager.entities.entitiesUtils.ItemTypes.BUG;
-import static TaskManager.entities.entitiesUtils.UserRole.ROLE_USER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class ItemServiceTest {
@@ -46,15 +41,7 @@ public class ItemServiceTest {
     private ItemRepository itemRepository;
     @InjectMocks
     private ItemService itemService;
-    private User user;
-    private Board goodBoard;
-    //private Board badBoard;
-    private Item item;
 
-    private List<Item> itemList;
-    private Set<ItemTypes> typeSet;
-    private Map<Integer, UserRole> usersRoles;
-    private Set<User> UserOnB;
 
     @BeforeEach
     @DisplayName("Make sure all the correct parameters are refreshed after each operation")
