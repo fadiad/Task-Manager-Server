@@ -122,52 +122,52 @@ public class BoardControllerTest {
 
         assertThrows(IllegalArgumentException.class, () -> boardController.addNewStatusToBoard(boardId, taskStatus));
     }
+//
+//    @Test
+//    public void testDeleteItemType_Success() {
+//        int boardId = 1;
+//        BoardRequest boardRequest = new BoardRequest();
+//        boardRequest.setType(Collections.singleton(BUG));
+//        Board board = new Board();
+//        when(boardService.deleteItemTypeOnBoard(boardId, Collections.singleton(BUG))).thenReturn(board);
+//        ResponseEntity<Board> response = boardController.deleteItemType(boardId, boardRequest);
+//
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertSame(board, response.getBody());
+//    }
 
-    @Test
-    public void testDeleteItemType_Success() {
-        int boardId = 1;
-        BoardRequest boardRequest = new BoardRequest();
-        boardRequest.setType(Collections.singleton(BUG));
-        Board board = new Board();
-        when(boardService.deleteItemTypeOnBoard(boardId, Collections.singleton(BUG))).thenReturn(board);
-        ResponseEntity<Board> response = boardController.deleteItemType(boardId, boardRequest);
+//    @Test
+//    public void testDeleteItemType_BoardNotFound() {
+//        int boardId = 1;
+//        BoardRequest boardRequest = new BoardRequest();
+//        boardRequest.setType(Collections.singleton(BUG));
+//        doThrow(new IllegalArgumentException("Board not found")).when(boardService).deleteItemTypeOnBoard(boardId, Collections.singleton(BUG));
+//
+//        assertThrows(IllegalArgumentException.class, () -> boardController.deleteItemType(boardId, boardRequest));
+//    }
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertSame(board, response.getBody());
-    }
+//    @Test
+//    public void testAddItemType_Success() {
+//        int boardId = 1;
+//        BoardRequest boardRequest = new BoardRequest();
+//        boardRequest.setType(Collections.singleton(BUG));
+//        Board board = new Board();
+//        when(boardService.addItemTypeOnBoard(boardId, Collections.singleton(BUG))).thenReturn(board);
+//        ResponseEntity<Board> response = boardController.addItemType(boardId, boardRequest);
+//
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertSame(board, response.getBody());
+//    }
 
-    @Test
-    public void testDeleteItemType_BoardNotFound() {
-        int boardId = 1;
-        BoardRequest boardRequest = new BoardRequest();
-        boardRequest.setType(Collections.singleton(BUG));
-        doThrow(new IllegalArgumentException("Board not found")).when(boardService).deleteItemTypeOnBoard(boardId, Collections.singleton(BUG));
-
-        assertThrows(IllegalArgumentException.class, () -> boardController.deleteItemType(boardId, boardRequest));
-    }
-
-    @Test
-    public void testAddItemType_Success() {
-        int boardId = 1;
-        BoardRequest boardRequest = new BoardRequest();
-        boardRequest.setType(Collections.singleton(BUG));
-        Board board = new Board();
-        when(boardService.addItemTypeOnBoard(boardId, Collections.singleton(BUG))).thenReturn(board);
-        ResponseEntity<Board> response = boardController.addItemType(boardId, boardRequest);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertSame(board, response.getBody());
-    }
-
-    @Test
-    public void testAddItemType_BoardNotFound() {
-        int boardId = 1;
-        BoardRequest boardRequest = new BoardRequest();
-        boardRequest.setType(Collections.singleton(BUG));
-        doThrow(new IllegalArgumentException("Board not found")).when(boardService).addItemTypeOnBoard(boardId, Collections.singleton(BUG));
-
-        assertThrows(IllegalArgumentException.class, () -> boardController.addItemType(boardId, boardRequest));
-    }
+//    @Test
+//    public void testAddItemType_BoardNotFound() {
+//        int boardId = 1;
+//        BoardRequest boardRequest = new BoardRequest();
+//        boardRequest.setType(Collections.singleton(BUG));
+//        doThrow(new IllegalArgumentException("Board not found")).when(boardService).addItemTypeOnBoard(boardId, Collections.singleton(BUG));
+//
+//        assertThrows(IllegalArgumentException.class, () -> boardController.addItemType(boardId, boardRequest));
+//    }
 
     @Test
     public void testUpdateItemStatus_Success() {

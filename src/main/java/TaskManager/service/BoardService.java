@@ -15,6 +15,7 @@ import TaskManager.repository.ItemRepository;
 import TaskManager.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -32,10 +33,13 @@ public class BoardService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    /** (void).
+
+    /**
+     * (void).
      * the function found the board by id and delete the status from the board.
-     * @param boardId board id.
-     * @param statusId  to find task status.
+     *
+     * @param boardId  board id.
+     * @param statusId to find task status.
      */
     @Transactional
     public void deleteStatus(int boardId, int statusId) {
@@ -49,28 +53,33 @@ public class BoardService {
         itemRepository.deleteByStatusId(statusId);
     }
 
-    /** (BoardToReturn).
+    /**
+     * (BoardToReturn).
      * add new board to user by board and userId.
-     * @param board board.
+     *
+     * @param board  board.
      * @param userId user id. if user not fount throw exception.
      * @return BoardToReturn that contain the board.
      */
     @Transactional
     public BoardToReturn addNewBoard(Board board, int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
-        Board toSave = new Board();
-        toSave.setTitle(board.getTitle());
-        toSave.setItemTypes(board.getItemTypes());
-        toSave.getUsersRoles().put(user.getId(), UserRole.ROLE_ADMIN);
-        toSave.getUsersOnBoard().add(user);
+
+        Board toSave = Board.createNewBoard(
+                board.getTitle(),
+                board.getItemTypes(),
+                user);
+
+
         user.getBoards().add(toSave);
         return new BoardToReturn(boardRepository.save(toSave));
     }
 
     /**
      * get board by id.
+     *
      * @param boardId board id
-     * @param userId user id
+     * @param userId  user id
      * @return the board, found the board by the userId and board by id
      */
     @Transactional
@@ -91,6 +100,7 @@ public class BoardService {
 
     /**
      * filter the items by the statuses un the board.
+     *
      * @param statusId status id in a board id.
      * @param allItems list of all items.
      * @return list of items in status x.
@@ -115,7 +125,8 @@ public class BoardService {
 
     /**
      * add status to board.
-     * @param boardId board id.
+     *
+     * @param boardId    board id.
      * @param taskStatus contain id and name of the status
      * @return the new board after adding the status
      */
@@ -130,48 +141,49 @@ public class BoardService {
 
     /**
      * delete item types from the board.
-     * @param boardId board id.
-     * @param typeSet set of the items type he wants to delete.
+     *
+     * @param boardId  board id.
+     * @param itemType item type he wants to delete.
      * @return the new board after changes.
      */
     @Transactional
-    public Board deleteItemTypeOnBoard(int boardId, Set<ItemTypes> typeSet) {
+    public Board deleteItemTypeOnBoard(int boardId, ItemTypes itemType) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
         Set<ItemTypes> types = board.getItemTypes();
         List<Item> items = itemRepository.findByBoardId(boardId);
 
-        for (ItemTypes itemTypes : typeSet) {
-            if (!types.remove(itemTypes))
-                throw new IllegalArgumentException("No such type on this board");
+        if (!types.remove(itemType))
+            throw new IllegalArgumentException("No such type on this board");
 
-            items.forEach(item -> {
-                if (item.getItemType() == itemTypes) {
-                    item.setItemType(null);
-                }
-            });
-        }
+        items.forEach(item -> {
+            if (item.getItemType() == itemType) {
+                item.setItemType(null);
+            }
+        });
+
         itemRepository.saveAll(items);
         return boardRepository.save(board);
     }
 
     /**
      * add item types to the board.
-     * @param boardId board id.
-     * @param typeSet set of types.
+     *
+     * @param boardId  board id.
+     * @param itemType set of types.
      * @return the new board after changes.
      */
     @Transactional
-    public Board addItemTypeOnBoard(int boardId, Set<ItemTypes> typeSet) {
+    public Board addItemTypeOnBoard(int boardId, ItemTypes itemType) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
-        for (ItemTypes itemTypes : typeSet) {
-            board.getItemTypes().add(itemTypes);
-        }
+
+        System.out.println(board.getItemTypes().add(itemType));
         return boardRepository.save(board);
     }
 
+
     /**
-     * @param boardId to find the board.
-     * @param itemId to found the item.
+     * @param boardId    to find the board.
+     * @param itemId     to found the item.
      * @param taskStatus the new one, with the new name and old id.
      * @return get taskStatus and update him on the board he found.
      */
@@ -193,10 +205,12 @@ public class BoardService {
         throw new IllegalArgumentException("STATUS NOT FOUND");
     }
 
+
     /**
      * to share board.
+     *
      * @param boardId to find the board.
-     * @param email the user to share with.
+     * @param email   the user to share with.
      * @return the user after he adds to him the board to share.
      */
     @Transactional

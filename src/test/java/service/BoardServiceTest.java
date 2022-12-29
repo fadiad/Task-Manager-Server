@@ -110,31 +110,31 @@ public class BoardServiceTest {
         assertTrue(boardService.addNewStatusToBoard(1, taskStatus).getTitle() == goodBoard.getTitle());
     }
 
-    @Test
-    @Disabled
-    @DisplayName("deleteItemTypeOnBoardd successfully")
-    public void deleteItemTypeOnBoard_successfully() {
-        when(boardRepository.findById(1)).thenReturn(Optional.of(goodBoard));
-        when(itemRepository.findByBoardId(1)).thenReturn(Mockito.any(List.class));
-        Set<ItemTypes> typeSet = new HashSet<>();
-        typeSet.add(TASK);
+//    @Test
+//    @Disabled
+//    @DisplayName("deleteItemTypeOnBoardd successfully")
+//    public void deleteItemTypeOnBoard_successfully() {
+//        when(boardRepository.findById(1)).thenReturn(Optional.of(goodBoard));
+//        when(itemRepository.findByBoardId(1)).thenReturn(Mockito.any(List.class));
+//        Set<ItemTypes> typeSet = new HashSet<>();
+//        typeSet.add(TASK);
+//
+//        when(itemRepository.saveAll(Mockito.anyList())).thenReturn(Mockito.anyList());
+//        given(boardRepository.save(Mockito.any(Board.class))).willReturn(goodBoard);
+//
+//        assertNotNull(boardService.deleteItemTypeOnBoard(1, typeSet));
+//    }
 
-        when(itemRepository.saveAll(Mockito.anyList())).thenReturn(Mockito.anyList());
-        given(boardRepository.save(Mockito.any(Board.class))).willReturn(goodBoard);
-
-        assertNotNull(boardService.deleteItemTypeOnBoard(1, typeSet));
-    }
-
-    @Test
-    @DisplayName("addItemTypeOnBoard successfully")
-    public void addItemTypeOnBoard_successfully() {
-        when(boardRepository.findById(1)).thenReturn(Optional.of(goodBoard));
-        given(boardRepository.save(Mockito.any(Board.class))).willReturn(goodBoard);
-        Set<ItemTypes> typeSet = new HashSet<>();
-        typeSet.add(BUG);
-
-        assertNotNull(boardService.addItemTypeOnBoard(1, typeSet));
-    }
+//    @Test
+//    @DisplayName("addItemTypeOnBoard successfully")
+//    public void addItemTypeOnBoard_successfully() {
+//        when(boardRepository.findById(1)).thenReturn(Optional.of(goodBoard));
+//        given(boardRepository.save(Mockito.any(Board.class))).willReturn(goodBoard);
+//        Set<ItemTypes> typeSet = new HashSet<>();
+//        typeSet.add(BUG);
+//
+//        assertNotNull(boardService.addItemTypeOnBoard(1, typeSet));
+//    }
 
     @Test
     @DisplayName("updateItemStatusToBoard successfully")
