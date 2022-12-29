@@ -48,7 +48,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter implements Ord
                     UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
 
                     if (jwtTokenHelper.validateToken(authToken, userDetails)) {
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, null);
                         authentication.setDetails(new WebAuthenticationDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                         request.setAttribute("userId",((SecurityUser)userDetails).getUser().getId());

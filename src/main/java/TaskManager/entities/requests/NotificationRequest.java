@@ -5,13 +5,11 @@ import TaskManager.entities.entitiesUtils.Ways;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
-public
-class NotificationRequest {
+public class NotificationRequest {
 
     private Set<Ways> ways;
     private Set<NotificationTypes> option;

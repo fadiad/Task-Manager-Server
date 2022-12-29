@@ -5,8 +5,8 @@ import TaskManager.entities.TaskStatus;
 import TaskManager.entities.requests.BoardRequest;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
 import TaskManager.entities.responseEntities.BoardToReturn;
+import TaskManager.entities.responseEntities.ItemDTO;
 import TaskManager.entities.responseEntities.UserDTO;
-import TaskManager.repository.BoardRepository;
 import TaskManager.service.BoardService;
 import TaskManager.service.NotificationService;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 public class BoardController {
 
     private final BoardService boardService;
-    private final BoardRepository boardRepository;
     private  final NotificationService notificationService;
 
     @PostMapping(value = "/board-create", consumes = "application/json", produces = "application/json")
@@ -39,7 +38,7 @@ public class BoardController {
     }
 
 
-
+//
     @DeleteMapping(value = "/delete-statues")
     public ResponseEntity<Board> removeStatuses(@RequestParam int boardId, @RequestParam int statusId) {
         boardService.deleteStatus(boardId, statusId);
@@ -62,8 +61,7 @@ public class BoardController {
         return new ResponseEntity<>(boardService.addItemTypeOnBoard(boardId, boardRequest.getType()), HttpStatus.OK);
     }
     @PutMapping(value = "/updateItemStatus", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Board> updateItemStatus(@RequestParam int boardId,@RequestParam int itemId, @RequestBody TaskStatus taskStatus) {
-
+    public ResponseEntity<ItemDTO> updateItemStatus(@RequestParam int boardId, @RequestParam int itemId, @RequestBody TaskStatus taskStatus) {
         return new ResponseEntity<>(boardService.updateItemStatusToBoard(boardId, itemId ,taskStatus), HttpStatus.OK);
     }
 

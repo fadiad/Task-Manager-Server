@@ -20,6 +20,9 @@ public class UserDTO {
     private String username;
     private String email;
 
+    private boolean emailNotification;
+    private boolean popUpNotification;
+    //private hasEmailnotification
     private Set<NotificationTypes> notificationTypes;
 
     public UserDTO(User user){
@@ -28,6 +31,8 @@ public class UserDTO {
             this.username = user.getUsername();
             this.email = user.getEmail();
             this.notificationTypes=user.getNotificationTypes();
+            this.emailNotification=user.isEmailNotification();
+            this.popUpNotification=user.isPopUpNotification();
         }
     }
 

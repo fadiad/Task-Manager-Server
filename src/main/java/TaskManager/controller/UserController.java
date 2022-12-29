@@ -3,9 +3,11 @@ package TaskManager.controller;
 
 import TaskManager.entities.requests.NotificationRequest;
 import TaskManager.entities.responseEntities.BoardToReturn;
+import TaskManager.entities.responseEntities.UserDTO;
 import TaskManager.service.BoardService;
 import TaskManager.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +23,9 @@ public class UserController {
     private  final UserService userService;
     private  final BoardService boardService;
     @PostMapping(value = "/notificationSetting", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Void> notificationSetting(HttpServletRequest request, @RequestBody NotificationRequest notificationRequest) {
-
+    public ResponseEntity<UserDTO> notificationSetting(HttpServletRequest request, @RequestBody NotificationRequest notificationRequest) {
         int userId= (int) request.getAttribute("userId");
-        userService.notificationSetting(userId, notificationRequest);
-        return null;
+        return new ResponseEntity<>(userService.notificationSetting(userId, notificationRequest), HttpStatus.CREATED);
     }
     @GetMapping(value = "/get-boards-by-userId")
     public List<BoardToReturn> getUserByToken1(HttpServletRequest request) {

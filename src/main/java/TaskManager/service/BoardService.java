@@ -128,21 +128,17 @@ public class BoardService {
         return boardRepository.save(board);
     }
     @Transactional
-    public Board updateItemStatusToBoard(int boardId, int itemId, TaskStatus taskStatus) {
+    public ItemDTO updateItemStatusToBoard(int boardId, int itemId, TaskStatus taskStatus) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("item not found"));
-        int statusId = item.getStatusId();
-        Set<TaskStatus> result = board.getStatues();
 
-        for (TaskStatus task: result) {
-            if(task.getId()==statusId){
-                task.setName(taskStatus.getName());
-                itemRepository.save(item);
-                boardRepository.save(board);
-                return board;
-            }
+        Set<TaskStatus> result = board.getStatues();
+        if(!result.contains(taskStatus)){
+            throw new IllegalArgumentException("STATUS NOT FOUND");
         }
-        throw new IllegalArgumentException("STATUS NOT FOUND");
+        item.setStatusId(taskStatus.getId());
+
+        return new ItemDTO(itemRepository.save(item));
     }
     @Transactional
     public UserDTO shareBoard(int boardId, String email) {

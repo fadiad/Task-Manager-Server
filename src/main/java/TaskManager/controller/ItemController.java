@@ -45,15 +45,16 @@ public class ItemController {
 
     @PutMapping(value = "/item-assignTO", produces = "application/json")
     public ResponseEntity<ItemDTO> assignItemTo(@RequestParam int itemId, @RequestParam int userId, @RequestParam int boardId) {
-        ResponseEntity<ItemDTO> result = new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
         notificationService.itemAssignedToMe(itemId, userId, boardId); //send notification
-        return result;
+        return new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/item-delete")
-    public void deleteItem(@RequestParam  int itemId) {
-        notificationService.itemDeleted(itemId);
+    public ResponseEntity<String> deleteItem(@RequestParam  int itemId,@RequestParam int boardId) {
+        //notificationService.itemDeleted(itemId);
         itemService.deleteItem(itemId);
+        return ResponseEntity.noContent().build();
+
     }
 
     @PostMapping(value = "/add-comment")
