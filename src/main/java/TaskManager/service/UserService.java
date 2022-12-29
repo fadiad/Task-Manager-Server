@@ -18,6 +18,11 @@ public class UserService  {
     private final UserRepository userRepository;
 
 
+    /**
+     * notification setting of the user, update and change them.
+     * @param userId to find the user
+     * @param notificationRequest contain 2 set of enum's. (ways, options)
+     */
     public void notificationSetting(int userId, NotificationRequest notificationRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
         System.out.println(user.getUsername());

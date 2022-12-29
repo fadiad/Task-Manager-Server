@@ -21,6 +21,10 @@ public class AuthService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    /**
+     * add user
+     * @param user get user details. and add the user to DB.
+     */
     @Transactional
     public void addUser(User user) {
         Optional<User> fetchedUser = userRepository.findByEmail(user.getEmail());
@@ -30,18 +34,34 @@ public class AuthService implements UserDetailsService {
         signUp(user);
     }
 
+    /**
+     * signUp the user unto the system.
+     * @param user details.
+     */
     private void signUp(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setUserRole(UserRole.ROLE_USER);
         userRepository.save(user);
     }
 
+    /**
+     * load the user from repository by his email
+     * @param email user's email.
+     * @return the user in UserDetails.
+     * @throws UsernameNotFoundException  if he gets bad credentials.
+     */
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email).map(SecurityUser::new)
                 .orElseThrow(() -> new UsernameNotFoundException("bad credentials"));
     }
+
+    /**
+     * sign up for gitHub users
+     * @param user details.
+     * @return user DTO
+     */
     @Transactional
     public UserDTO signUpGitUser(User user) {
         Optional<User> fetchedUser = userRepository.findByEmail(user.getEmail());

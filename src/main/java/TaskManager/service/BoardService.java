@@ -32,12 +32,16 @@ public class BoardService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    //TODO done
-        @Transactional
-        public void deleteStatus(int boardId, int statusId) {
+    /** (void).
+     * the function found the board by id and delete the status from the board.
+     * @param boardId board id.
+     * @param statusId  to find task status.
+     */
+    @Transactional
+    public void deleteStatus(int boardId, int statusId) {
 
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
-        Optional<TaskStatus> deletedStatus=board.getStatues().stream().filter(taskStatus -> taskStatus.getId() ==statusId).findFirst();
+        Optional<TaskStatus> deletedStatus = board.getStatues().stream().filter(taskStatus -> taskStatus.getId() == statusId).findFirst();
         if (!deletedStatus.isPresent()) {
             throw new IllegalArgumentException("This status is not on this board");
         }
@@ -45,7 +49,12 @@ public class BoardService {
         itemRepository.deleteByStatusId(statusId);
     }
 
-    //TODO  this is done
+    /** (BoardToReturn).
+     * add new board to user by board and userId.
+     * @param board board.
+     * @param userId user id. if user not fount throw exception.
+     * @return BoardToReturn that contain the board.
+     */
     @Transactional
     public BoardToReturn addNewBoard(Board board, int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
@@ -58,14 +67,18 @@ public class BoardService {
         return new BoardToReturn(boardRepository.save(toSave));
     }
 
-    //TODO  this is done
+    /**
+     * get board by id.
+     * @param boardId board id
+     * @param userId user id
+     * @return the board, found the board by the userId and board by id
+     */
     @Transactional
     public BoardDetailsDTO getBoardById(int boardId, int userId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("no board found"));
         if (!board.getUsersRoles().containsKey(userId)) {
             throw new IllegalArgumentException("this user not on board");
         }
-//        System.out.println(board.getUsersOnBoard());
 
         List<UserDTO> useresOnBoard = board.getUsersOnBoard().stream().map(UserDTO::new).collect(Collectors.toList());
 
@@ -73,13 +86,24 @@ public class BoardService {
 
         Map<Integer, List<ItemDTO>> itemFilteredByStatus = board.getStatues().stream().collect(Collectors.toMap(TaskStatus::getId, taskStatus -> filterItemsByStatus(taskStatus.getId(), allItemsByBoardId)));
 
-        return new BoardDetailsDTO(board, itemFilteredByStatus , useresOnBoard);
+        return new BoardDetailsDTO(board, itemFilteredByStatus, useresOnBoard);
     }
 
+    /**
+     * filter the items by the statuses un the board.
+     * @param statusId status id in a board id.
+     * @param allItems list of all items.
+     * @return list of items in status x.
+     */
     private List<ItemDTO> filterItemsByStatus(int statusId, List<Item> allItems) {
-        return allItems.stream().filter(item -> item.getStatusId() == statusId).map(ItemDTO::new).collect(Collectors.toList());
+        return allItems.stream().filter(item -> item.getStatusId() == statusId).map(ItemDTO::createItemDTO).collect(Collectors.toList());
     }
 
+    /***
+     * get user boards.
+     * @param userId user id.
+     * @return all boards of the user bt user id.
+     */
     @Transactional
     public List<BoardToReturn> getUserBoards(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
@@ -89,7 +113,13 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional//TODO  this is done
+    /**
+     * add status to board.
+     * @param boardId board id.
+     * @param taskStatus contain id and name of the status
+     * @return the new board after adding the status
+     */
+    @Transactional
     public Board addNewStatusToBoard(int boardId, TaskStatus taskStatus) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
         taskStatus.setBoard(board);
@@ -98,7 +128,12 @@ public class BoardService {
         return boardRepository.save(board);
     }
 
-    //TODO done
+    /**
+     * delete item types from the board.
+     * @param boardId board id.
+     * @param typeSet set of the items type he wants to delete.
+     * @return the new board after changes.
+     */
     @Transactional
     public Board deleteItemTypeOnBoard(int boardId, Set<ItemTypes> typeSet) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
@@ -109,7 +144,7 @@ public class BoardService {
             if (!types.remove(itemTypes))
                 throw new IllegalArgumentException("No such type on this board");
 
-              items.forEach(item -> {
+            items.forEach(item -> {
                 if (item.getItemType() == itemTypes) {
                     item.setItemType(null);
                 }
@@ -119,6 +154,12 @@ public class BoardService {
         return boardRepository.save(board);
     }
 
+    /**
+     * add item types to the board.
+     * @param boardId board id.
+     * @param typeSet set of types.
+     * @return the new board after changes.
+     */
     @Transactional
     public Board addItemTypeOnBoard(int boardId, Set<ItemTypes> typeSet) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException("Board not found"));
@@ -127,6 +168,13 @@ public class BoardService {
         }
         return boardRepository.save(board);
     }
+
+    /**
+     * @param boardId to find the board.
+     * @param itemId to found the item.
+     * @param taskStatus the new one, with the new name and old id.
+     * @return get taskStatus and update him on the board he found.
+     */
     @Transactional
     public Board updateItemStatusToBoard(int boardId, int itemId, TaskStatus taskStatus) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
@@ -134,8 +182,8 @@ public class BoardService {
         int statusId = item.getStatusId();
         Set<TaskStatus> result = board.getStatues();
 
-        for (TaskStatus task: result) {
-            if(task.getId()==statusId){
+        for (TaskStatus task : result) {
+            if (task.getId() == statusId) {
                 task.setName(taskStatus.getName());
                 itemRepository.save(item);
                 boardRepository.save(board);
@@ -144,12 +192,19 @@ public class BoardService {
         }
         throw new IllegalArgumentException("STATUS NOT FOUND");
     }
+
+    /**
+     * to share board.
+     * @param boardId to find the board.
+     * @param email the user to share with.
+     * @return the user after he adds to him the board to share.
+     */
     @Transactional
     public UserDTO shareBoard(int boardId, String email) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("user not found"));
-        if(board.getUsersRoles().containsKey(user.getId())){
-            throw new IllegalArgumentException("user already exist un the board");
+        if (board.getUsersRoles().containsKey(user.getId())) {
+            throw new IllegalArgumentException("user already exist on the board");
         }
         board.getUsersOnBoard().add(user);
         user.getBoards().add(board);
