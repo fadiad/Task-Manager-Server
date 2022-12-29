@@ -28,12 +28,27 @@ public class ItemController {
     private final ItemService itemService;
     private final NotificationService notificationService;
 
+
+    /**
+     * add new item to boardId
+     * @param boardId to find the board where we want to add the item
+     * @param newItem the new item we want to add
+     * @return itemDTO
+     */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_LEADER')")
     @PostMapping(value = "/item-create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ItemDTO> addNewItem(@RequestParam int boardId,@RequestBody Item newItem) {
         return new ResponseEntity<ItemDTO>(itemService.addNewItem(newItem,boardId), HttpStatus.CREATED);
     }
 
+
+    /**
+     * update item on board
+     * @param request contain the details about the request in the server.
+     * @param itemId to find the details of the item we want to update
+     * @param updatedItem the new details
+     * @return the item after changes.
+     */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_LEADER')")
     @PutMapping(value = "/item-update", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ItemDTO> updateItem(HttpServletRequest request, @RequestParam int itemId, @RequestBody Item updatedItem) {
@@ -45,21 +60,41 @@ public class ItemController {
         }
     }
 
+
+    /**
+     * assign Item To User
+     * @param itemId the item details
+     * @param userId that we want to assign
+     * @param boardId to find the board
+     * @return the itemDTO
+     */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_LEADER')")
     @PutMapping(value = "/item-assignTO", produces = "application/json")
     public ResponseEntity<ItemDTO> assignItemTo(@RequestParam int itemId, @RequestParam int userId, @RequestParam int boardId) {
-        notificationService.itemAssignedToMe(itemId, userId, boardId); //send notification
-        return new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
+//        ResponseEntity<ItemDTO> result = new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
+//        notificationService.itemAssignedToMe(itemId, userId, boardId); //send notification
+        return  new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
     }
+
+    /**
+     * delete item by id
+     * @param itemId to find the item in DATA BASE
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/item-delete")
     public ResponseEntity<String> deleteItem(@RequestParam  int itemId,@RequestParam int boardId) {
         //notificationService.itemDeleted(itemId);
+//        notificationService.itemDeleted(itemId);
         itemService.deleteItem(itemId);
         return ResponseEntity.noContent().build();
 
     }
 
+    /**
+     * @param request contain the details about the request in the server.
+     * @param itemId to find the item that we want to add comment
+     * @param comment the comment details
+     */
     @PostMapping(value = "/add-comment")
     public void addComment(HttpServletRequest request,@RequestParam int itemId, @RequestBody Comment comment) {
         int userId= (int) request.getAttribute("userId");
@@ -68,6 +103,11 @@ public class ItemController {
     }
 
 
+    /**
+     * get board by id
+     * @param filterItem
+     * @return the item details
+     */
     @PostMapping(value = "/filter", produces = "application/json")
     public List<ItemDTO> getBoardById(@RequestBody FilterItem filterItem) {
         return itemService.filter(filterItem);

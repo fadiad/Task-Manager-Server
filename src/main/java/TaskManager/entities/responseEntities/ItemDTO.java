@@ -27,7 +27,7 @@ public class ItemDTO {
     private UserDTO assignTo;
     private int Importance;
 
-    public ItemDTO(Item item) {
+    private ItemDTO(Item item) {
         if (item != null) {
             this.id = item.getId();
             this.Title = item.getTitle();
@@ -58,5 +58,9 @@ public class ItemDTO {
                 ", assignTo=" + assignTo +
                 ", Importance=" + Importance +
                 '}';
+    }
+
+    public static ItemDTO createItemDTO(Item item) {
+        return new ItemDTO(item);
     }
 }

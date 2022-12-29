@@ -11,6 +11,10 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class GitService {
 
+    /**
+     * @param code from the frontend. get code when user try to log in with gitHub
+     * @return token
+     */
     public String getTokenFromCode(@RequestParam String code) {
         String client_id = "f21614ae68732a9a2cc0";
         String client_secret = "a62b7f0991686edd80a37b4b2aa63411df873fb0";
@@ -22,11 +26,19 @@ public class GitService {
         return result.getAccess_token();
     }
 
+    /**
+     * @param token og the user that log in
+     * @return details of the user from the token
+     */
     public GitUser getDetailsFromToken(@RequestParam String token) {
         String linkForName = "https://api.github.com/user"; //out from function
         return getDetailsFromTokenFunction(linkForName, token);
     }
 
+    /**
+     * @param link get link on git to fet token
+     * @return token
+     */
     public static TokenResponse getTokenFromCodeFunction(String link) {  //send link return response
         ResponseEntity<TokenResponse> response = null;
         RestTemplate restTemplate = new RestTemplate();
@@ -40,6 +52,9 @@ public class GitService {
         }
     }
 
+    /**
+     * get details from token
+     */
     public static GitUser getDetailsFromTokenFunction(String link, String bearerToken) {
         ResponseEntity<GitUser> response = null;
         RestTemplate restTemplate = new RestTemplate();
@@ -48,14 +63,13 @@ public class GitService {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         try {
-//          response=restTemplate.exchange(link, HttpMethod.GET, entity, GitUser.class);
             GitUser gitUser = restTemplate.exchange(link, HttpMethod.GET, entity, GitUser.class).getBody();
             System.out.println(gitUser.getName());
             System.out.println(gitUser.getEmail());
 
             return gitUser;
         } catch (Exception e) {
-            System.out.println("error to get details from git" + e);
+            System.out.println("Error to get details from git" + e);
         }
         return null;
     }

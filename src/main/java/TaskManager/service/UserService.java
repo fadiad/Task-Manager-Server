@@ -19,6 +19,11 @@ import static TaskManager.entities.entitiesUtils.Ways.POP_UP;
 public class UserService  {
     private final UserRepository userRepository;
 
+    /**
+     * notification setting of the user, update and change them.
+     * @param userId to find the user
+     * @param notificationRequest contain 2 set of enum's. (ways, options)
+     */
     @Transactional
     public UserDTO notificationSetting(int userId, NotificationRequest notificationRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));

@@ -41,6 +41,11 @@ public class AuthController {
     private final GitService gitService;
 
 
+    /**
+     * method for log in
+     * @param credentials this is the LoginRequest details
+     * @return details if success
+     */
     @PostMapping(value = "/login_User", consumes = "application/json", produces = "application/json")
     public ResponseEntity<LoginData> login(@RequestBody LoginRequest credentials) {
         if(!Validations.isEmailRegexValid(credentials.getEmail())){
@@ -61,6 +66,11 @@ public class AuthController {
 
     }
 
+    /**
+     * create user
+     * @param user details
+     * @return ok if success
+     */
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> create(@RequestBody User user) {
         Validations.fullUserValid(user); //TODO we wii add validation here in the near future folks
@@ -71,8 +81,10 @@ public class AuthController {
     }
 
 
-
-
+    /**
+     * @param code from the frontend, take this code and get the details from gitHub
+     * @return details of the user from gitHub
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/allDetails",produces = "application/json")
     public ResponseEntity<LoginData> OAuth2Request(@RequestParam String code) {
         String gitToken = gitService.getTokenFromCode(code);
