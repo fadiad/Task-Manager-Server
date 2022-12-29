@@ -20,6 +20,13 @@ import java.util.List;
 public class UserController {
     private  final UserService userService;
     private  final BoardService boardService;
+
+    /**
+     *notification setting
+     * @param request object that contain data about the request that arrive to the server
+     * @param notificationRequest contain 2 set of the notification settings
+     * @return response/void
+     */
     @PostMapping(value = "/notificationSetting", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Void> notificationSetting(HttpServletRequest request, @RequestBody NotificationRequest notificationRequest) {
 
@@ -27,6 +34,12 @@ public class UserController {
         userService.notificationSetting(userId, notificationRequest);
         return null;
     }
+
+    /**
+     * get user by his token.
+     * @param request object that contain data about the request that arrive to the server.
+     * @return all boards of user by the userId in the request.
+     */
     @GetMapping(value = "/get-boards-by-userId")
     public List<BoardToReturn> getUserByToken1(HttpServletRequest request) {
         int userId= (int) request.getAttribute("userId");

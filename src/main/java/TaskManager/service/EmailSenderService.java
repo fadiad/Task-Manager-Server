@@ -19,7 +19,7 @@ public class EmailSenderService {
 
     /**
      * method that responsible for sending email
-     * @param email
+     * @param email to send the email.
      */
     @Async
     public void sendEmail(SimpleMailMessage email) {

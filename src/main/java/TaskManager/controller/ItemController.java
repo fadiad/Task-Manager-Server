@@ -27,11 +27,24 @@ public class ItemController {
     private final ItemService itemService;
     private final NotificationService notificationService;
 
+    /**
+     * add new item to boardId
+     * @param boardId to find the board where we want to add the item
+     * @param newItem the new item we want to add
+     * @return itemDTO
+     */
     @PostMapping(value = "/item-create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ItemDTO> addNewItem(@RequestParam int boardId,@RequestBody Item newItem) {
         return new ResponseEntity<ItemDTO>(itemService.addNewItem(newItem,boardId), HttpStatus.CREATED);
     }
 
+    /**
+     * update item on board
+     * @param request contain the details about the request in the server.
+     * @param itemId to find the details of the item we want to update
+     * @param updatedItem the new details
+     * @return the item after changes.
+     */
     @PutMapping(value = "/item-update", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ItemDTO> updateItem(HttpServletRequest request, @RequestParam int itemId, @RequestBody Item updatedItem) {
         UserRole userRole = (UserRole) request.getAttribute("role");
@@ -43,6 +56,13 @@ public class ItemController {
     }
 
 
+    /**
+     * assign Item To User
+     * @param itemId the item details
+     * @param userId that we want to assign
+     * @param boardId to find the board
+     * @return the itemDTO
+     */
     @PutMapping(value = "/item-assignTO", produces = "application/json")
     public ResponseEntity<ItemDTO> assignItemTo(@RequestParam int itemId, @RequestParam int userId, @RequestParam int boardId) {
         ResponseEntity<ItemDTO> result = new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
@@ -50,12 +70,21 @@ public class ItemController {
         return result;
     }
 
+    /**
+     * delete item by id
+     * @param itemId to find the item in DATA BASE
+     */
     @DeleteMapping(value = "/item-delete")
     public void deleteItem(@RequestParam  int itemId) {
         notificationService.itemDeleted(itemId);
         itemService.deleteItem(itemId);
     }
 
+    /**
+     * @param request contain the details about the request in the server.
+     * @param itemId to find the item that we want to add comment
+     * @param comment the comment details
+     */
     @PostMapping(value = "/add-comment")
     public void addComment(HttpServletRequest request,@RequestParam int itemId, @RequestBody Comment comment) {
         int userId= (int) request.getAttribute("userId");
@@ -64,6 +93,11 @@ public class ItemController {
     }
 
 
+    /**
+     * get board by id
+     * @param filterItem
+     * @return the item details
+     */
     @PostMapping(value = "/filter", produces = "application/json")
     public List<ItemDTO> getBoardById(@RequestBody FilterItem filterItem) {
         return itemService.filter(filterItem);

@@ -12,11 +12,17 @@ import javax.persistence.EntityNotFoundException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * take care about the exceptions
+     */
     @ExceptionHandler({IllegalArgumentException.class, EntityNotFoundException.class})
     public ResponseEntity<String> badRequest(IllegalArgumentException e) {
         return ResponseEntity.badRequest().body(e.getLocalizedMessage());
     }
 
+    /**
+     * take care about the exceptions
+     */
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<String> responseException(ResponseStatusException e) {
         return new ResponseEntity<>(e.getReason(), e.getStatus());

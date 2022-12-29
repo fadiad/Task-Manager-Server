@@ -59,65 +59,28 @@ public class ItemServiceTest {
     @BeforeEach
     @DisplayName("Make sure all the correct parameters are refreshed after each operation")
     public void setUp() {
-        user = new User();
-        user.setEmail("forTest@gmail.com");
-        user.setId(1);
-        user.setUsername("nameTest");
-        user.setUserRole(ROLE_USER);
-        goodBoard = new Board();
-        goodBoard.setTitle("title");
-        goodBoard.setId(1);
 
-        usersRoles = new HashMap<>();
-        usersRoles.put(1, ROLE_USER);
-        goodBoard.setUsersRoles(usersRoles);
-        UserOnB.add(user);
-        goodBoard.setUsersOnBoard(UserOnB);
-        item = new Item();
-        item.setId(2);
-        item.setStatusId(1);
-        TaskStatus Status = new TaskStatus(1, "taskStatus", goodBoard);
     }
-    @Test
-    public void testFilter_noMatchingItems() {
-        Item item1 = new Item();
-        item1.setBoardId(1);
-        item1.setStatusId(1);
-        item1.setDueDate(LocalDate.now());
-        item1.setImportance(1);
 
-        Item item2 = new Item();
-        item2.setBoardId(1);
-        item2.setStatusId(2);
-        item2.setDueDate(LocalDate.now());
-        item2.setImportance(2);
-
-        List<Item> items = Arrays.asList(item1, item2);
-        FilterItem filter1 = new FilterItem();
-
-        QueryBuilder queryBuilder = new QueryBuilder(filter1);
-
-//        when(itemRepository.findAll(queryBuilder)).thenReturn(items);
-
-        FilterItem filter = new FilterItem();
-        filter.setBoardId(1);
-        filter.setStatusId(3);
-        filter.setDueDate(LocalDate.now().plusDays(1));
-        filter.setImportance(3);
-
-        List<ItemDTO> result = itemService.filter(filter);
-
-        assertEquals(0, result.size());
-    }
     @Test
     @DisplayName("filter successfully")
     public void filter_successfully() {
         FilterItem filterItem = new FilterItem(BUG, 5, LocalDate.now(), 1, 1);
         QueryBuilder queryBuilder = new QueryBuilder(filterItem);
-//        given(itemRepository.findAll(queryBuilder)).willReturn(Mockito.any(List.class));
 
         assertNotNull(itemService.filter(filterItem));
     }
+    @Test
+    public void testFilter_noMatchingItems() {
+        Item item1 = Item.createItem(1, 2, LocalDate.now(), 2);
+        Item item2 = Item.createItem (1, 2 ,LocalDate.now() , 2);
+        FilterItem filter1 = new FilterItem();
+        FilterItem filter = new FilterItem(BUG, 3, LocalDate.now().plusDays(1), 3,1 );
+        List<ItemDTO> result = itemService.filter(filter);
+
+        assertEquals(0, result.size());
+    }
+
 //    @Test
 //    @Disabled
 //    public void addNewItem_successfully() {

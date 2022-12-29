@@ -23,6 +23,11 @@ public class NotificationService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
+    /**
+     * @param itemId need to be deleted.
+     * @param userId to find user and send the mail.
+     * @param boardId to find the board
+     */
     public void itemAssignedToMe(int itemId, int userId, int boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("Board not found"));
         User userToAssign = board.getUsersOnBoard().stream()
@@ -31,6 +36,11 @@ public class NotificationService {
         String massage = "Item Assigned To Me";
         sendMailMassage(userToAssign, ITEM_ASSIGNED_TO_ME, massage);
     }
+
+    /**
+     *
+     * @param itemId to find the item on the board and send email to all users on the board
+     */
     public void itemDeleted(int itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("item not found"));
         Board board = boardRepository.findById(item.getBoardId()).orElseThrow(() -> new IllegalArgumentException("board not found"));
@@ -54,6 +64,9 @@ public class NotificationService {
 
     }
 
+    /**
+     * the method that send mails for set of user's, and check before settings
+     */
     private void sendMailMassage(Set<User> userSet, NotificationTypes notificationTypes, String massage) {
         for (User user : userSet) {
             if (user.getNotificationTypes().contains(notificationTypes) && (user.isEmailNotification())) {
@@ -63,6 +76,9 @@ public class NotificationService {
         }
     }
 
+    /**
+     * the method that send mails for one user, and check before settings
+     */
     private void sendMailMassage(User user, NotificationTypes notificationTypes, String massage) {
 
         if (user.getNotificationTypes().contains(notificationTypes) && (user.isEmailNotification())) {
