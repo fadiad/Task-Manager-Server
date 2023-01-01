@@ -39,8 +39,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter implements Ord
         if(!request.getRequestURI().contains("/auth")) {
             String authToken = jwtTokenHelper.getToken(request);
 
-            if (null != authToken) {
 
+            if (null != authToken) {
                 String userName = jwtTokenHelper.getUsernameFromToken(authToken);
 
                 if (null != userName) {
@@ -52,6 +52,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter implements Ord
                         authentication.setDetails(new WebAuthenticationDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                         request.setAttribute("userId",((SecurityUser)userDetails).getUser().getId());
+
                     } else {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                         return;

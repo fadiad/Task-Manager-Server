@@ -6,6 +6,7 @@ import TaskManager.entities.TaskStatus;
 import TaskManager.entities.User;
 import TaskManager.entities.entitiesUtils.ItemTypes;
 import TaskManager.entities.entitiesUtils.UserRole;
+import TaskManager.entities.requests.ShareBoard;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
 import TaskManager.entities.responseEntities.BoardToReturn;
 import TaskManager.entities.responseEntities.ItemDTO;
@@ -15,7 +16,6 @@ import TaskManager.repository.ItemRepository;
 import TaskManager.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -181,26 +181,6 @@ public class BoardService {
     }
 
 
-    /**
-     * @param boardId    to find the board.
-     * @param itemId     to found the item.
-     * @param taskStatus the new one, with the new name and old id.
-     * @return get taskStatus and update him on the board he found.
-     */
-    @Transactional
-    public ItemDTO updateItemStatusToBoard(int boardId, int itemId, TaskStatus taskStatus) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("item not found"));
-
-        Set<TaskStatus> result = board.getStatues();
-        if(!result.contains(taskStatus)) {
-            throw new IllegalArgumentException("STATUS NOT FOUND");
-        }
-
-        item.setStatusId(taskStatus.getId());
-
-        return  ItemDTO.createItemDTO(itemRepository.save(item));
-    }
 
 
     /**
@@ -211,14 +191,18 @@ public class BoardService {
      * @return the user after he adds to him the board to share.
      */
     @Transactional
-    public UserDTO shareBoard(int boardId, String email) {
+    public UserDTO shareBoard(int boardId, ShareBoard shareBoard) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("user not found"));
+        User user = userRepository.findByEmail(shareBoard.getEmail()).orElseThrow(() -> new IllegalArgumentException("user not found"));
         if (board.getUsersRoles().containsKey(user.getId())) {
             throw new IllegalArgumentException("user already exist on the board");
         }
         board.getUsersOnBoard().add(user);
-        board.getUsersRoles().put(user.getId(), UserRole.ROLE_USER);
+        UserRole userRole =UserRole.ROLE_USER;
+        if(shareBoard.getAssignLeader()){
+            userRole=UserRole.ROLE_LEADER;
+        }
+        board.getUsersRoles().put(user.getId(), userRole);
         user.getBoards().add(board);
         return new UserDTO(userRepository.save(user));
     }

@@ -2,12 +2,12 @@ package TaskManager.controller;
 
 import TaskManager.entities.Board;
 import TaskManager.entities.TaskStatus;
+import TaskManager.entities.entitiesUtils.RealTimeActions;
 import TaskManager.entities.entitiesUtils.Validations;
 import TaskManager.entities.requests.BoardRequest;
 import TaskManager.entities.requests.ShareBoard;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
 import TaskManager.entities.responseEntities.BoardToReturn;
-import TaskManager.entities.responseEntities.ItemDTO;
 import TaskManager.entities.responseEntities.UserDTO;
 import TaskManager.service.BoardService;
 import TaskManager.service.NotificationService;
@@ -15,11 +15,14 @@ import TaskManager.utils.emailUtils.EmailSenderFacade;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/board")
@@ -30,6 +33,8 @@ public class BoardController {
     private final BoardService boardService;
 
     private  final NotificationService notificationService;
+
+    private final SimpMessagingTemplate simpMessagingTemplate;
     private final EmailSenderFacade emailSenderFacade;
 
 
@@ -67,6 +72,13 @@ public class BoardController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<Board> removeStatuses(@RequestParam int boardId, @RequestParam int statusId) {
         boardService.deleteStatus(boardId, statusId);
+        Map<String,Object> payload = new HashMap<>();
+        payload.put("action", RealTimeActions.DELETE_STATUS_ON_BOARD);
+
+        payload.put("statusId",statusId);
+
+        simpMessagingTemplate.convertAndSend("/board/"+boardId,payload);
+
         return ResponseEntity.noContent().build();
     }
 
@@ -79,7 +91,15 @@ public class BoardController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/add-statues", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Board> addNewStatusToBoard(@RequestParam int boardId, @RequestBody TaskStatus taskStatus) {
-        return new ResponseEntity<>(boardService.addNewStatusToBoard(boardId, taskStatus), HttpStatus.CREATED);
+        Board board= boardService.addNewStatusToBoard(boardId, taskStatus);
+
+        Map<String,Object> payload = new HashMap<>();
+        payload.put("action", RealTimeActions.ADD_STATUS_ON_BOARD);
+        payload.put("board",board);
+
+        simpMessagingTemplate.convertAndSend("/board/"+board.getId(),payload);
+
+        return new ResponseEntity<>(board, HttpStatus.CREATED);
     }
 
 
@@ -93,6 +113,11 @@ public class BoardController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/delete-itemType", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Board> deleteItemType(@RequestParam int boardId, @RequestBody BoardRequest boardRequest) {
+        Map<String,Object> payload = new HashMap<>();
+        payload.put("action", RealTimeActions.DELETE_ITEM_TYPE_ON_BOARD);
+        payload.put("type",boardRequest.getType());
+
+        simpMessagingTemplate.convertAndSend("/board/"+boardId,payload);
         return new ResponseEntity<>(boardService.deleteItemTypeOnBoard(boardId, boardRequest.getType()), HttpStatus.OK);
     }
 
@@ -112,20 +137,7 @@ public class BoardController {
     }
 
 
-    /**
-     * update item status
-     *
-     * @param boardId    to find the board we want to change.
-     * @param itemId     that we want to change
-     * @param taskStatus the new details
-     * @return the board after changes.
-     */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping(value = "/updateItemStatus", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ItemDTO> updateItemStatus(@RequestParam int boardId, @RequestParam int itemId, @RequestBody TaskStatus taskStatus) {
 
-        return new ResponseEntity<>(boardService.updateItemStatusToBoard(boardId, itemId, taskStatus), HttpStatus.OK);
-    }
 
     /**
      * share boars with other user
@@ -140,7 +152,7 @@ public class BoardController {
         if(!Validations.isEmailRegexValid(share.getEmail())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid email");
         }
-        UserDTO userDTO=boardService.shareBoard(boardId, share.getEmail());
+        UserDTO userDTO=boardService.shareBoard(boardId, share);
         emailSenderFacade.sendEmail(share.getEmail());
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }

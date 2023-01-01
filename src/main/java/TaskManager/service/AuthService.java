@@ -65,7 +65,14 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public UserDTO signUpGitUser(User user) {
         Optional<User> fetchedUser = userRepository.findByEmail(user.getEmail());
-        return fetchedUser.map(UserDTO::new).orElseGet(() -> new UserDTO(userRepository.save(user)));
+
+        if(fetchedUser.isPresent()){
+            if(fetchedUser.get().getPassword()!=null){
+               throw new IllegalArgumentException("this email already in use");
+            }
+            return new UserDTO(fetchedUser.get());
+        }
+        return new UserDTO(userRepository.save(user));
     }
 
 }

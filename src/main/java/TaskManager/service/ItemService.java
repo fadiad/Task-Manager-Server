@@ -1,9 +1,6 @@
 package TaskManager.service;
 
-import TaskManager.entities.Board;
-import TaskManager.entities.Comment;
-import TaskManager.entities.Item;
-import TaskManager.entities.User;
+import TaskManager.entities.*;
 import TaskManager.entities.entitiesUtils.FilterItem;
 import TaskManager.entities.entitiesUtils.UserRole;
 import TaskManager.entities.responseEntities.ItemDTO;
@@ -18,9 +15,8 @@ import javax.naming.NoPermissionException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Service
 @AllArgsConstructor
@@ -127,9 +123,10 @@ public class ItemService {
      * @param itemId to find the item.
      */
     @Transactional
-    public void deleteItem(int itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found"));
+    public Item deleteItem(int itemId) {
+        Item item= itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found"));
         itemRepository.deleteById(itemId);
+        return item;
     }
 
     /**
@@ -149,10 +146,34 @@ public class ItemService {
                 .filter(u -> u.getId() == userId)
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("user not found"));
 
-        Comment toSave = comment.createComment(user.getUsername());
+        Comment toSave = Comment.createComment(user.getUsername());
 
         item.getStatues().add(toSave);
         itemRepository.save(item);
         return comment;
+    }
+
+
+    /**
+     * @param boardId    to find the board.
+     * @param itemId     to found the item.
+     * @param taskStatus the new one, with the new name and old id.
+     * @return get taskStatus and update him on the board he found.
+     */
+    @Transactional
+    public ItemDTO  updateItemStatusToBoard(int boardId, int itemId, TaskStatus newStatus, TaskStatus oldStatus) {
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("item not found"));
+
+        Set<TaskStatus> result = board.getStatues();
+        if(!result.contains(newStatus) || !result.contains(oldStatus)) {
+            throw new IllegalArgumentException("STATUS NOT FOUND");
+        }else if (oldStatus.getId() != item.getStatusId()){
+            throw new IllegalArgumentException("this item is not part of this status");
+        }
+
+        item.setStatusId(newStatus.getId());
+
+        return  ItemDTO.createItemDTO(itemRepository.save(item));
     }
 }

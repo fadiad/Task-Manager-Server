@@ -14,6 +14,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
    Optional<Item> findById(int itemId);
    void deleteById(int id);
 
+
+
    void deleteByStatusId(int statusId);
 
    List<Item> findByBoardIdAndItemType(int boardId, ItemTypes type);

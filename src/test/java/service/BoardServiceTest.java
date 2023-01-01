@@ -4,7 +4,6 @@ import TaskManager.entities.Board;
 import TaskManager.entities.Item;
 import TaskManager.entities.TaskStatus;
 import TaskManager.entities.User;
-
 import TaskManager.entities.entitiesUtils.ItemTypes;
 import TaskManager.entities.entitiesUtils.UserRole;
 import TaskManager.entities.responseEntities.BoardDetailsDTO;
@@ -14,7 +13,6 @@ import TaskManager.repository.ItemRepository;
 import TaskManager.repository.UserRepository;
 import TaskManager.service.BoardService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,15 +22,15 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import java.util.*;
-
-import static TaskManager.entities.entitiesUtils.ItemTypes.BUG;
-import static TaskManager.entities.entitiesUtils.ItemTypes.TASK;
 import static TaskManager.entities.entitiesUtils.UserRole.ROLE_USER;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BoardServiceTest {
@@ -136,18 +134,18 @@ public class BoardServiceTest {
 //        assertNotNull(boardService.addItemTypeOnBoard(1, typeSet));
 //    }
 
-    @Test
-    @DisplayName("updateItemStatusToBoard successfully")
-    public void updateItemStatusToBoard_successfully() {
-        when(boardRepository.findById(1)).thenReturn(Optional.of(goodBoard));
-        when(itemRepository.findById(1)).thenReturn(Optional.of(item));
-        given(itemRepository.save(Mockito.any(Item.class))).willReturn(item);
-        given(boardRepository.save(Mockito.any(Board.class))).willReturn(goodBoard);
-        TaskStatus taskStatus = new TaskStatus(1, "BUG", goodBoard);
-        goodBoard.getStatues().add(taskStatus);
-        assertNotNull(boardService.updateItemStatusToBoard(1, 1, taskStatus));
-
-    }
+//    @Test
+//    @DisplayName("updateItemStatusToBoard successfully")
+//    public void updateItemStatusToBoard_successfully() {
+//        when(boardRepository.findById(1)).thenReturn(Optional.of(goodBoard));
+//        when(itemRepository.findById(1)).thenReturn(Optional.of(item));
+//        given(itemRepository.save(Mockito.any(Item.class))).willReturn(item);
+//        given(boardRepository.save(Mockito.any(Board.class))).willReturn(goodBoard);
+//        TaskStatus taskStatus = new TaskStatus(1, "BUG", goodBoard);
+//        goodBoard.getStatues().add(taskStatus);
+//        assertNotNull(boardService.updateItemStatusToBoard(1, 1, taskStatus));
+//
+//    }
 
     @Test
     public void testDeleteStatus_Success() {
