@@ -21,8 +21,11 @@ public class AuthService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     /**
-     * add user
+     * Add user used in user registration process , checks if user email is already used by any user in the db ,
+     * if yes it returns an message and stops registration process , else it adds the user to the db .
+     *
      * @param user get user details. and add the user to DB.
      */
     @Transactional
@@ -35,7 +38,8 @@ public class AuthService implements UserDetailsService {
     }
 
     /**
-     * signUp the user unto the system.
+     * signUp function adds the user to the DB , it used of addUser function.
+     *
      * @param user details.
      */
     private void signUp(User user) {
@@ -45,10 +49,11 @@ public class AuthService implements UserDetailsService {
     }
 
     /**
-     * load the user from repository by his email
-     * @param email user's email.
-     * @return the user in UserDetails.
-     * @throws UsernameNotFoundException  if he gets bad credentials.
+     * get user from DB , if user is not existed it will return
+     *
+     * @param email
+     * @return
+     * @throws UsernameNotFoundException
      */
     @Override
     @Transactional
@@ -59,6 +64,7 @@ public class AuthService implements UserDetailsService {
 
     /**
      * sign up for gitHub users
+     *
      * @param user details.
      * @return user DTO
      */
@@ -66,9 +72,9 @@ public class AuthService implements UserDetailsService {
     public UserDTO signUpGitUser(User user) {
         Optional<User> fetchedUser = userRepository.findByEmail(user.getEmail());
 
-        if(fetchedUser.isPresent()){
-            if(fetchedUser.get().getPassword()!=null){
-               throw new IllegalArgumentException("this email already in use");
+        if (fetchedUser.isPresent()) {
+            if (fetchedUser.get().getPassword() != null) {
+                throw new IllegalArgumentException("this email already in use");
             }
             return new UserDTO(fetchedUser.get());
         }

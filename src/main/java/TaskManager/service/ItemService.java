@@ -41,10 +41,11 @@ public class ItemService {
     }
 
     /**
-     * add new item.
+     * add new item to board, get anew item details and board id, find the user of the new item, and the board from the repo,
+     * found the status if existed, else throw exception
      *
-     * @param newItem new item
-     * @return the item after he added the item into the repository.
+     * @param newItem new item details (user id, boardId, title and more)
+     * @return the itemDTO after he added the item into the repository.
      */
     @Transactional
     public ItemDTO addNewItem(Item newItem, int boardId) {
@@ -67,12 +68,14 @@ public class ItemService {
 
 
     /**
-     * found the item in the board and set the AssignTo to the user he found.
+     * get itemID, userID, boardID, found the item in the board and set the AssignTo
+     * to the user he found. if the user/board/item not found, throws exception,
+     * if success, set the assignItem to the user he gets
      *
      * @param itemId  to find item
      * @param userId  to find user
      * @param boardId to find board
-     * @return the item after updated.
+     * @return the itemDTO after updated. with specific details
      */
     @Transactional
     public ItemDTO assignItemTo(int itemId, int userId, int boardId) {
@@ -95,12 +98,13 @@ public class ItemService {
 
 
     /**
-     * update item.
+     * get itemId to update  and the new item, and the user role, found the "old" item, check the role
+     * if ok, update the item in the repository, else, throws exception.
      *
-     * @param itemId      to find item.
-     * @param updatedItem the new item.
-     * @param userRole    of the user.
-     * @return the new item after updated in itemDTO.
+     * @param itemId      to find the old item.
+     * @param updatedItem the find the new item.
+     * @param userRole    of the user to check if he can update the item.
+     * @return the new itemDTO after updated in item.
      * @throws NoPermissionException if user without permission try to update the item.
      */
     @Transactional
@@ -122,7 +126,8 @@ public class ItemService {
     }
 
     /**
-     * delete item by the id.
+     * get id of item, and delete item by the id. if id not found  throws EntityNotFoundException
+     * keep changes on the repository
      *
      * @param itemId to find the item.
      */
@@ -134,9 +139,11 @@ public class ItemService {
     }
 
     /**
-     * add comment to item in board by their id.
+     * add comment to item in board by the id.
+     * get item/user id and full comment, fins the item, and if not exist throws exception. and found the user also,
+     * if succeeded, add the comment to the item he found.
      *
-     * @param itemId  to find item
+     * @param itemId  to find the item
      * @param userId  to find the user in comment.
      * @param comment the comment with the details.
      * @return the comment after adding into the item in board.
@@ -159,10 +166,15 @@ public class ItemService {
 
 
     /**
-     * @param boardId    to find the board.
-     * @param itemId     to found the item.
-//     * @param taskStatus the new one, with the new name and old id.
-     * @return get taskStatus and update him on the board he found.
+     * get boardId, and itemId, and new and old taskStatus
+     * found the item on the board, and found the old status, and change the status to the new status he has,
+     * and keep the new item on the repository
+     *
+     * @param boardId   to find the board, else, throws exception
+     * @param itemId    to find the item, else, throws exception
+     * @param newStatus to find the new status we want to update, else, throws exception
+     * @param oldStatus to find the old status we want to update, else, throws exception
+     * @return the new item after updated, as a itemDTO
      */
     @Transactional
     public ItemDTO updateItemStatusToBoard(int boardId, int itemId, TaskStatus newStatus, TaskStatus oldStatus) {
