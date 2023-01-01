@@ -29,7 +29,8 @@ public class ItemService {
     //------------------------------------
 
     /**
-     * filter the items by specific property he gets.
+     * It gets a different parameters of an item such as importance , itemType , dueDate
+     * and returns an items that has these parameters values .
      *
      * @param filter contain types to the filter.
      * @return list of filter items.
@@ -41,7 +42,8 @@ public class ItemService {
 
     /**
      * add new item to board, get anew item details and board id, find the user of the new item, and the board from the repo,
-     found the status if existed, else throw exception
+     * found the status if existed, else throw exception
+     *
      * @param newItem new item details (user id, boardId, title and more)
      * @return the itemDTO after he added the item into the repository.
      */
@@ -67,8 +69,9 @@ public class ItemService {
 
     /**
      * get itemID, userID, boardID, found the item in the board and set the AssignTo
-     to the user he found. if the user/board/item not found, throws exception,
-     if success, set the assignItem to the user he gets
+     * to the user he found. if the user/board/item not found, throws exception,
+     * if success, set the assignItem to the user he gets
+     *
      * @param itemId  to find item
      * @param userId  to find user
      * @param boardId to find board
@@ -96,18 +99,19 @@ public class ItemService {
 
     /**
      * get itemId to update  and the new item, and the user role, found the "old" item, check the role
-     if ok, update the item in the repository, else, throws exception.
-     * @param itemId to find the old item.
+     * if ok, update the item in the repository, else, throws exception.
+     *
+     * @param itemId      to find the old item.
      * @param updatedItem the find the new item.
-     * @param userRole of the user to check if he can update the item.
+     * @param userRole    of the user to check if he can update the item.
      * @return the new itemDTO after updated in item.
      * @throws NoPermissionException if user without permission try to update the item.
      */
     @Transactional
     public ItemDTO updateItem(int itemId, Item updatedItem, UserRole userRole) throws NoPermissionException {
         Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("Item not found"));
-        if(oldItem.getId() != updatedItem.getId() || oldItem.getBoardId()!= updatedItem.getBoardId()
-                || oldItem.getStatusId() !=updatedItem.getStatusId()){
+        if (oldItem.getId() != updatedItem.getId() || oldItem.getBoardId() != updatedItem.getBoardId()
+                || oldItem.getStatusId() != updatedItem.getStatusId()) {
             throw new IllegalArgumentException("You are trying to update invalid item");
         }
         if (userRole == UserRole.ROLE_LEADER) {
@@ -123,20 +127,22 @@ public class ItemService {
 
     /**
      * get id of item, and delete item by the id. if id not found  throws EntityNotFoundException
-     keep changes on the repository
+     * keep changes on the repository
+     *
      * @param itemId to find the item.
      */
     @Transactional
-    public Item  deleteItem(int itemId) {
-        Item item= itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found"));
+    public Item deleteItem(int itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found"));
         itemRepository.deleteById(itemId);
         return item;
     }
 
     /**
      * add comment to item in board by the id.
-     *get item/user id and full comment, fins the item, and if not exist throws exception. and found the user also,
+     * get item/user id and full comment, fins the item, and if not exist throws exception. and found the user also,
      * if succeeded, add the comment to the item he found.
+     *
      * @param itemId  to find the item
      * @param userId  to find the user in comment.
      * @param comment the comment with the details.
@@ -152,7 +158,7 @@ public class ItemService {
                 .filter(u -> u.getId() == userId)
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("user not found"));
 
-        Comment toSave = Comment.createComment(user.getUsername(),comment.getContent());
+        Comment toSave = Comment.createComment(user.getUsername(), comment.getContent());
         toSave.setItem(item);
         item.getComments().add(toSave);
         return ItemDTO.createItemDTO(itemRepository.save(item));
@@ -161,28 +167,29 @@ public class ItemService {
 
     /**
      * get boardId, and itemId, and new and old taskStatus
-     found the item on the board, and found the old status, and change the status to the new status he has,
-     and keep the new item on the repository
-     * @param boardId to find the board, else, throws exception
-     * @param itemId to find the item, else, throws exception
+     * found the item on the board, and found the old status, and change the status to the new status he has,
+     * and keep the new item on the repository
+     *
+     * @param boardId   to find the board, else, throws exception
+     * @param itemId    to find the item, else, throws exception
      * @param newStatus to find the new status we want to update, else, throws exception
      * @param oldStatus to find the old status we want to update, else, throws exception
      * @return the new item after updated, as a itemDTO
      */
     @Transactional
-    public ItemDTO  updateItemStatusToBoard(int boardId, int itemId, TaskStatus newStatus, TaskStatus oldStatus) {
+    public ItemDTO updateItemStatusToBoard(int boardId, int itemId, TaskStatus newStatus, TaskStatus oldStatus) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("item not found"));
 
         Set<TaskStatus> result = board.getStatues();
-        if(!result.contains(newStatus) || !result.contains(oldStatus)) {
+        if (!result.contains(newStatus) || !result.contains(oldStatus)) {
             throw new IllegalArgumentException("STATUS NOT FOUND");
-        }else if (oldStatus.getId() != item.getStatusId()){
+        } else if (oldStatus.getId() != item.getStatusId()) {
             throw new IllegalArgumentException("this item is not part of this status");
         }
 
         item.setStatusId(newStatus.getId());
 
-        return  ItemDTO.createItemDTO(itemRepository.save(item));
+        return ItemDTO.createItemDTO(itemRepository.save(item));
     }
 }

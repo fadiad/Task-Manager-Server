@@ -32,14 +32,16 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    private  final NotificationService notificationService;
+    private final NotificationService notificationService;
 
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final EmailSenderFacade emailSenderFacade;
 
 
-
     /**
+     * Create Board rout , when user sends a request to make new board , his request will be treated by this rout ,
+     * it gets a board title and item types that he wants to be in the board .
+     *
      * @param request contain the details about the request in the server.
      * @param board   details to create
      * @return the board after the creation
@@ -51,6 +53,8 @@ public class BoardController {
     }
 
     /**
+     * This rout gets a board id and returns BoardDetailsDTO .
+     *
      * @param request contain the details about the request in the server.
      * @param boardId that we want to find
      * @return details
@@ -62,8 +66,10 @@ public class BoardController {
     }
 
 
-
     /**
+     * This rout is used to delete status - status and its items ,
+     * it gets a status id to be deleted and a board to check permissions .
+     *
      * @param boardId  that we want to change
      * @param statusId that we want to remove.
      * @return the board after changes.
@@ -72,18 +78,21 @@ public class BoardController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<Board> removeStatuses(@RequestParam int boardId, @RequestParam int statusId) {
         boardService.deleteStatus(boardId, statusId);
-        Map<String,Object> payload = new HashMap<>();
+        Map<String, Object> payload = new HashMap<>();
         payload.put("action", RealTimeActions.DELETE_STATUS_ON_BOARD);
 
-        payload.put("statusId",statusId);
+        payload.put("statusId", statusId);
 
-        simpMessagingTemplate.convertAndSend("/board/"+boardId,payload);
+        simpMessagingTemplate.convertAndSend("/board/" + boardId, payload);
 
         return ResponseEntity.noContent().build();
     }
 
 
     /**
+     * This rout is used to add new status to a board ,
+     * it gets a board id and a TaskStatus that contains a status title .
+     *
      * @param boardId    to find the board we want to change.
      * @param taskStatus the new one
      * @return the board after changes.
@@ -91,20 +100,22 @@ public class BoardController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/add-statues", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Board> addNewStatusToBoard(@RequestParam int boardId, @RequestBody TaskStatus taskStatus) {
-        Board board= boardService.addNewStatusToBoard(boardId, taskStatus);
+        Board board = boardService.addNewStatusToBoard(boardId, taskStatus);
 
-        Map<String,Object> payload = new HashMap<>();
+        Map<String, Object> payload = new HashMap<>();
         payload.put("action", RealTimeActions.ADD_STATUS_ON_BOARD);
-        payload.put("board",board);
+        payload.put("board", board);
 
-        simpMessagingTemplate.convertAndSend("/board/"+board.getId(),payload);
+        simpMessagingTemplate.convertAndSend("/board/" + board.getId(), payload);
 
         return new ResponseEntity<>(board, HttpStatus.CREATED);
     }
 
 
     /**
-     * delete item type
+     * delete item type of a board ,
+     * it gets an item type that we want to delete,
+     * and it deletes it from the DB .
      *
      * @param boardId      to find the board we want to change.
      * @param boardRequest contain set of types that we want to delete
@@ -113,17 +124,18 @@ public class BoardController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/delete-itemType", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Board> deleteItemType(@RequestParam int boardId, @RequestBody BoardRequest boardRequest) {
-        Map<String,Object> payload = new HashMap<>();
+        Map<String, Object> payload = new HashMap<>();
         payload.put("action", RealTimeActions.DELETE_ITEM_TYPE_ON_BOARD);
-        payload.put("type",boardRequest.getType());
+        payload.put("type", boardRequest.getType());
 
-        simpMessagingTemplate.convertAndSend("/board/"+boardId,payload);
+        simpMessagingTemplate.convertAndSend("/board/" + boardId, payload);
         return new ResponseEntity<>(boardService.deleteItemTypeOnBoard(boardId, boardRequest.getType()), HttpStatus.OK);
     }
 
 
     /**
-     * add item type
+     * Add item type to a board , it gets the item type that we want to add ,
+     * and it adds it to the set of types in the board .
      *
      * @param boardId      to find the board we want to change.
      * @param boardRequest contain set of types that we want to delete
@@ -137,22 +149,21 @@ public class BoardController {
     }
 
 
-
-
     /**
-     * share boars with other user
+     * Share board with other users , it gets a user email in the ShareBoard board ,
+     * it adds the user email to the list of users on the board ,
+     * and adds the board to the list of boards on the user entity .
      *
      * @param boardId where we want to add someone
-     * @param email   the new user's email
      * @return the user details
      */
     @PostMapping(value = "/shareBoard")
     public ResponseEntity<UserDTO> shareBoardByUserId(@RequestParam int boardId, @RequestBody ShareBoard share) {
         System.out.println(share.getEmail());
-        if(!Validations.isEmailRegexValid(share.getEmail())){
+        if (!Validations.isEmailRegexValid(share.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid email");
         }
-        UserDTO userDTO=boardService.shareBoard(boardId, share);
+        UserDTO userDTO = boardService.shareBoard(boardId, share);
         emailSenderFacade.sendEmail(share.getEmail());
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }

@@ -35,8 +35,8 @@ public class BoardService {
 
 
     /**
-     * (void).
-     * the function found the board by id and delete the status from the board.
+     * The function checks if board is exists , checks if the status is existed in the board ,
+     * and deletes the status from the board.
      *
      * @param boardId  board id.
      * @param statusId to find task status.
@@ -54,8 +54,8 @@ public class BoardService {
     }
 
     /**
-     * (BoardToReturn).
-     * add new board to user by board and userId.
+     * Get a board title and item types , and creates new board that contains only these data ,
+     * adds the user to the list of users on the board, and it assigns his role as admin .
      *
      * @param board  board.
      * @param userId user id. if user not fount throw exception.
@@ -76,7 +76,9 @@ public class BoardService {
     }
 
     /**
-     * get board by id.
+     * Get board by id , it gets board id and user id ,and returns board details to the user ,
+     * first it checks if board is already existed in the DB ,
+     * and checks if the user is existed in the board users list .
      *
      * @param boardId board id
      * @param userId  user id
@@ -99,7 +101,9 @@ public class BoardService {
     }
 
     /**
-     * filter the items by the statuses un the board.
+     * filter the items by the statuses un the board ,
+     * it gets a status id ,
+     * return items filtered by status id .
      *
      * @param statusId status id in a board id.
      * @param allItems list of all items.
@@ -111,7 +115,7 @@ public class BoardService {
     }
 
     /***
-     * get user boards.
+     * get user id and returns all the boards of the user as BoardToReturn - board id ,title .
      * @param userId user id.
      * @return all boards of the user bt user id.
      */
@@ -125,7 +129,9 @@ public class BoardService {
     }
 
     /**
-     * add status to board.
+     * add new status to a board , it gets board id ,
+     * check if exists ,
+     * adds status to the list of statuses on the board .
      *
      * @param boardId    board id.
      * @param taskStatus contain id and name of the status
@@ -141,7 +147,9 @@ public class BoardService {
     }
 
     /**
-     * delete item types from the board.
+     * delete item type from the board ,
+     * it gets an item type and delete it from the list of types on the board ,
+     * it updates all the items that has this specific type empty them type.
      *
      * @param boardId  board id.
      * @param itemType item type he wants to delete.
@@ -167,7 +175,7 @@ public class BoardService {
     }
 
     /**
-     * add item types to the board.
+     * add item types to the board , it gets an item type and adds it to the list of types on the boards.
      *
      * @param boardId  board id.
      * @param itemType set of types.
@@ -182,14 +190,14 @@ public class BoardService {
     }
 
 
-
-
     /**
-     * to share board.
+     * Share board with other users , it gets a user email in the ShareBoard board ,
+     * it adds the user email to the list of users on the board ,
+     * and adds the board to the list of boards on the user entity .
      *
-     * @param boardId to find the board.
-     * @param email   the user to share with.
-     * @return the user after he adds to him the board to share.
+     * @param boardId
+     * @param shareBoard
+     * @return
      */
     @Transactional
     public UserDTO shareBoard(int boardId, ShareBoard shareBoard) {
@@ -199,9 +207,9 @@ public class BoardService {
             throw new IllegalArgumentException("user already exist on the board");
         }
         board.getUsersOnBoard().add(user);
-        UserRole userRole =UserRole.ROLE_USER;
-        if(shareBoard.getAssignLeader()){
-            userRole=UserRole.ROLE_LEADER;
+        UserRole userRole = UserRole.ROLE_USER;
+        if (shareBoard.getAssignLeader()) {
+            userRole = UserRole.ROLE_LEADER;
         }
         board.getUsersRoles().put(user.getId(), userRole);
         user.getBoards().add(board);

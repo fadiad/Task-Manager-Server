@@ -36,21 +36,23 @@ public class ItemController {
 
 
     /**
-     * add new item to boardId
+     * Add new item to boardId , it gets a board id and an item title by the object Item ,
+     * and adds it to the board items .
+     *
      * @param boardId to find the board where we want to add the item
      * @param newItem the new item we want to add
      * @return itemDTO
      */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_LEADER')")
     @PostMapping(value = "/item-create", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ItemDTO> addNewItem(@RequestParam int boardId,@RequestBody Item newItem) {
+    public ResponseEntity<ItemDTO> addNewItem(@RequestParam int boardId, @RequestBody Item newItem) {
 
-        ItemDTO itemDTO =itemService.addNewItem(newItem,boardId);
-        Map<String,Object> payload = new HashMap<>();
+        ItemDTO itemDTO = itemService.addNewItem(newItem, boardId);
+        Map<String, Object> payload = new HashMap<>();
         payload.put("action", RealTimeActions.ADD_ITEM_ON_BOARD);
-        payload.put("item",itemDTO);
+        payload.put("item", itemDTO);
 
-        simpMessagingTemplate.convertAndSend("/board/"+boardId,payload);
+        simpMessagingTemplate.convertAndSend("/board/" + boardId, payload);
 
         return new ResponseEntity<>(itemDTO, HttpStatus.CREATED);
 
@@ -58,9 +60,11 @@ public class ItemController {
 
 
     /**
-     * update item on board
-     * @param request contain the details about the request in the server.
-     * @param itemId to find the details of the item we want to update
+     * Update item on board , it gets an item - copy of an item the already existed in the db ,
+     * and it set its new details on the old one .
+     *
+     * @param request     contain the details about the request in the server.
+     * @param itemId      to find the details of the item we want to update
      * @param updatedItem the new details
      * @return the item after changes.
      */
@@ -69,12 +73,12 @@ public class ItemController {
     public ResponseEntity<ItemDTO> updateItem(HttpServletRequest request, @RequestParam int itemId, @RequestBody Item updatedItem) {
         try {
             UserRole userRole = (UserRole) request.getAttribute("role");
-            ItemDTO itemDTO =itemService.updateItem(itemId, updatedItem, userRole);
-            Map<String,Object> payload = new HashMap<>();
+            ItemDTO itemDTO = itemService.updateItem(itemId, updatedItem, userRole);
+            Map<String, Object> payload = new HashMap<>();
             payload.put("action", RealTimeActions.UPDATE_ITEM_DATA);
-            payload.put("item",itemDTO);
+            payload.put("item", itemDTO);
 
-            simpMessagingTemplate.convertAndSend("/board/"+updatedItem.getBoardId(),payload);
+            simpMessagingTemplate.convertAndSend("/board/" + updatedItem.getBoardId(), payload);
             return new ResponseEntity<>(itemDTO, HttpStatus.OK);
         } catch (NoPermissionException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getLocalizedMessage());
@@ -83,9 +87,11 @@ public class ItemController {
 
 
     /**
-     * assign Item To User
-     * @param itemId the item details
-     * @param userId that we want to assign
+     * Assign Item To User , it gets an item id and a user id ,
+     * to make item assignTo equals to used id .
+     *
+     * @param itemId  the item details
+     * @param userId  that we want to assign
      * @param boardId to find the board
      * @return the itemDTO
      */
@@ -93,80 +99,87 @@ public class ItemController {
     @PutMapping(value = "/item-assignTO", produces = "application/json")
     public ResponseEntity<ItemDTO> assignItemTo(@RequestParam int itemId, @RequestParam int userId, @RequestParam int boardId) {
 
-        ItemDTO itemDTO =itemService.assignItemTo(itemId, userId, boardId);
-        Map<String,Object> payload = new HashMap<>();
+        ItemDTO itemDTO = itemService.assignItemTo(itemId, userId, boardId);
+        Map<String, Object> payload = new HashMap<>();
         payload.put("action", RealTimeActions.ITEM_ASSIGNED_TO_ME);
-        payload.put("item",itemDTO);
+        payload.put("item", itemDTO);
 
-        simpMessagingTemplate.convertAndSend("/board/"+boardId,payload);
-        return  new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
+        simpMessagingTemplate.convertAndSend("/board/" + boardId, payload);
+        return new ResponseEntity<>(itemService.assignItemTo(itemId, userId, boardId), HttpStatus.OK);
     }
 
 
     /**
-     * update item status
+     * This rout is used to change item status , it deletes the item old status id ,
+     * and add a new status id
      *
-     * @param boardId    to find the board we want to change.
-     * @param itemId     that we want to change
-     * @param taskStatus the new details
-     * @return the board after changes.
+     * @param boardId
+     * @param itemId
+     * @param updateStatusRequest
+     * @return
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/updateItemStatus", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ItemDTO> updateItemStatus(@RequestParam int boardId, @RequestParam int itemId, @RequestBody UpdateStatusRequest updateStatusRequest) {
-        ItemDTO item=itemService.updateItemStatusToBoard(boardId, itemId, updateStatusRequest.getNewStatus(), updateStatusRequest.getOldStatus());
-        Map<String,Object> payload = new HashMap<>();
+        ItemDTO item = itemService.updateItemStatusToBoard(boardId, itemId, updateStatusRequest.getNewStatus(), updateStatusRequest.getOldStatus());
+        Map<String, Object> payload = new HashMap<>();
 
         payload.put("action", RealTimeActions.UPDATE_ITEM_STATUS);
-        payload.put("oldStatus",updateStatusRequest.getOldStatus());
-        payload.put("newStatus",updateStatusRequest.getNewStatus());
-        payload.put("item",item);
-        simpMessagingTemplate.convertAndSend("/board/"+boardId,payload);
+        payload.put("oldStatus", updateStatusRequest.getOldStatus());
+        payload.put("newStatus", updateStatusRequest.getNewStatus());
+        payload.put("item", item);
+        simpMessagingTemplate.convertAndSend("/board/" + boardId, payload);
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
 
     /**
-     * delete item by id
+     * Delete item by id ,
+     * it gets an item id and delete it from board items .
+     *
      * @param itemId to find the item in DATA BASE
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/item-delete")
-    public ResponseEntity<String> deleteItem(@RequestParam  int itemId,@RequestParam int boardId) {
-        Item item=itemService.deleteItem(itemId);
-        Map<String,Object> payload = new HashMap<>();
+    public ResponseEntity<String> deleteItem(@RequestParam int itemId, @RequestParam int boardId) {
+        Item item = itemService.deleteItem(itemId);
+        Map<String, Object> payload = new HashMap<>();
         payload.put("action", RealTimeActions.DELETE_ITEM_ON_BOARD);
-        payload.put("statusId",item.getStatusId());
-        payload.put("itemId",item.getId());
-        simpMessagingTemplate.convertAndSend("/board/"+boardId,payload);
+        payload.put("statusId", item.getStatusId());
+        payload.put("itemId", item.getId());
+        simpMessagingTemplate.convertAndSend("/board/" + boardId, payload);
         return ResponseEntity.noContent().build();
 
     }
 
     /**
+     * Add comment to the list of comments of the item , gets an item id and a comment to add .
+     *
      * @param request contain the details about the request in the server.
-     * @param itemId to find the item that we want to add comment
+     * @param itemId  to find the item that we want to add comment
      * @param comment the comment details
      */
     @PostMapping(value = "/add-comment")
-    public ResponseEntity<ItemDTO> addComment(HttpServletRequest request,@RequestParam int boardId ,@RequestParam int itemId, @RequestBody Comment comment) {
-        int userId= (int) request.getAttribute("userId");
+    public ResponseEntity<ItemDTO> addComment(HttpServletRequest request, @RequestParam int boardId, @RequestParam int itemId, @RequestBody Comment comment) {
+        int userId = (int) request.getAttribute("userId");
         System.out.println(comment);
-        ItemDTO itemDTO = itemService.addComment(itemId, userId , comment);
+        ItemDTO itemDTO = itemService.addComment(itemId, userId, comment);
 
-        Map<String,Object> payload = new HashMap<>();
+        Map<String, Object> payload = new HashMap<>();
 
         payload.put("action", RealTimeActions.ADD_COMMENT);
-        payload.put("item",itemDTO);
-        simpMessagingTemplate.convertAndSend("/board/"+boardId,payload);
-        return new ResponseEntity<>(itemDTO,HttpStatus.OK);
+        payload.put("item", itemDTO);
+        simpMessagingTemplate.convertAndSend("/board/" + boardId, payload);
+        return new ResponseEntity<>(itemDTO, HttpStatus.OK);
     }
 
 
     /**
-     * get board by id
+     * It gets a different parameters of an item such as importance , itemType , dueDate
+     * and returns an items that has these parameters values .
+     *
      * @param filterItem
-     * @return the item details
+     * @return
      */
     @PostMapping(value = "/filter", produces = "application/json")
     public List<ItemDTO> getBoardById(@RequestBody FilterItem filterItem) {

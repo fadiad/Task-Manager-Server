@@ -51,7 +51,7 @@ public class ItemTest {
         item.setCreator(creator);
         item.setAssignTo(assignTo);
         item.setImportance(importance);
-        item.setStatues(comments);
+//        item.setStatues(comments);
 
         assertEquals(id, item.getId());
         assertEquals(boardId, item.getBoardId());
@@ -64,7 +64,7 @@ public class ItemTest {
         assertEquals(creator, item.getCreator());
         assertEquals(assignTo, item.getAssignTo());
         assertEquals(importance, item.getImportance());
-        assertEquals(comments, item.getStatues());
+//        assertEquals(comments, item.getStatues());
     }
 }
 

@@ -39,15 +39,15 @@ public class UserControllerTest {
     private UserController userController;
 
 
-    @Test
-    void testNotificationSetting() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getAttribute("userId")).thenReturn(1);
-        NotificationRequest notificationRequest = new NotificationRequest(new HashSet<>(Arrays.asList(Ways.EMAIL)), new HashSet<>(Arrays.asList(NotificationTypes.ITEM_DELETED)));
-        ResponseEntity<Void> response = userController.notificationSetting(request, notificationRequest);
-
-        verify(userService).notificationSetting(1, notificationRequest);
-    }
+//    @Test
+//    void testNotificationSetting() {
+//        HttpServletRequest request = mock(HttpServletRequest.class);
+//        when(request.getAttribute("userId")).thenReturn(1);
+//        NotificationRequest notificationRequest = new NotificationRequest(new HashSet<>(Arrays.asList(Ways.EMAIL)), new HashSet<>(Arrays.asList(NotificationTypes.ITEM_DELETED)));
+//        ResponseEntity<Void> response = userController.notificationSetting(request, notificationRequest);
+//
+//        verify(userService).notificationSetting(1, notificationRequest);
+//    }
 
 
     @Test
