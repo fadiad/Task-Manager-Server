@@ -67,9 +67,15 @@ public class ItemController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_LEADER')")
     @PutMapping(value = "/item-update", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ItemDTO> updateItem(HttpServletRequest request, @RequestParam int itemId, @RequestBody Item updatedItem) {
-        UserRole userRole = (UserRole) request.getAttribute("role");
         try {
-            return new ResponseEntity<>(itemService.updateItem(itemId, updatedItem, userRole), HttpStatus.OK);
+            UserRole userRole = (UserRole) request.getAttribute("role");
+            ItemDTO itemDTO =itemService.updateItem(itemId, updatedItem, userRole);
+            Map<String,Object> payload = new HashMap<>();
+            payload.put("action", RealTimeActions.UPDATE_ITEM_DATA);
+            payload.put("item",itemDTO);
+
+            simpMessagingTemplate.convertAndSend("/board/"+updatedItem.getBoardId(),payload);
+            return new ResponseEntity<>(itemDTO, HttpStatus.OK);
         } catch (NoPermissionException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getLocalizedMessage());
         }
@@ -143,10 +149,17 @@ public class ItemController {
      * @param comment the comment details
      */
     @PostMapping(value = "/add-comment")
-    public void addComment(HttpServletRequest request,@RequestParam int itemId, @RequestBody Comment comment) {
+    public ResponseEntity<ItemDTO> addComment(HttpServletRequest request,@RequestParam int boardId ,@RequestParam int itemId, @RequestBody Comment comment) {
         int userId= (int) request.getAttribute("userId");
-        Comment comment1 = itemService.addComment(itemId, userId , comment);
-        notificationService.commentAdded(userId);
+        System.out.println(comment);
+        ItemDTO itemDTO = itemService.addComment(itemId, userId , comment);
+
+        Map<String,Object> payload = new HashMap<>();
+
+        payload.put("action", RealTimeActions.ADD_COMMENT);
+        payload.put("item",itemDTO);
+        simpMessagingTemplate.convertAndSend("/board/"+boardId,payload);
+        return new ResponseEntity<>(itemDTO,HttpStatus.OK);
     }
 
 

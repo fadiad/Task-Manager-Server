@@ -105,7 +105,10 @@ public class ItemService {
     @Transactional
     public ItemDTO updateItem(int itemId, Item updatedItem, UserRole userRole) throws NoPermissionException {
         Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("Item not found"));
-
+        if(oldItem.getId() != updatedItem.getId() || oldItem.getBoardId()!= updatedItem.getBoardId()
+                || oldItem.getStatusId() !=updatedItem.getStatusId()){
+            throw new IllegalArgumentException("You are trying to update invalid item");
+        }
         if (userRole == UserRole.ROLE_LEADER) {
             if (!oldItem.getDueDate().equals(updatedItem.getDueDate()) ||
                     oldItem.getImportance() != updatedItem.getImportance()) {
@@ -137,7 +140,8 @@ public class ItemService {
      * @param comment the comment with the details.
      * @return the comment after adding into the item in board.
      */
-    public Comment addComment(int itemId, int userId, Comment comment) {
+    @Transactional
+    public ItemDTO addComment(int itemId, int userId, Comment comment) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found"));
         Board board = boardRepository.findById(item.getBoardId()).orElseThrow(() -> new EntityNotFoundException("board not found"));
 
@@ -146,11 +150,10 @@ public class ItemService {
                 .filter(u -> u.getId() == userId)
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("user not found"));
 
-        Comment toSave = Comment.createComment(user.getUsername());
-
-        item.getStatues().add(toSave);
-        itemRepository.save(item);
-        return comment;
+        Comment toSave = Comment.createComment(user.getUsername(),comment.getContent());
+        toSave.setItem(item);
+        item.getComments().add(toSave);
+        return ItemDTO.createItemDTO(itemRepository.save(item));
     }
 
 

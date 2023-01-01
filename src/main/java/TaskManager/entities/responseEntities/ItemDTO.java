@@ -1,5 +1,6 @@
 package TaskManager.entities.responseEntities;
 
+import TaskManager.entities.Comment;
 import TaskManager.entities.Item;
 import TaskManager.entities.entitiesUtils.ItemTypes;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,6 +29,8 @@ public class ItemDTO {
     private UserDTO assignTo;
     private int Importance;
 
+    private Set<Comment> commentSet;
+
     private ItemDTO(Item item) {
         if (item != null) {
             this.id = item.getId();
@@ -40,6 +44,7 @@ public class ItemDTO {
             this.dueDate = item.getDueDate();
             this.parentItem = item.getParentItem();
             this.Importance = item.getImportance();
+            this.commentSet=item.getComments();
         }
     }
 
