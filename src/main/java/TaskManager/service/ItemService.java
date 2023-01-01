@@ -29,7 +29,8 @@ public class ItemService {
     //------------------------------------
 
     /**
-     * filter the items by specific property he gets.
+     * It gets a different parameters of an item such as importance , itemType , dueDate
+     * and returns an items that has these parameters values .
      *
      * @param filter contain types to the filter.
      * @return list of filter items.
@@ -105,8 +106,8 @@ public class ItemService {
     @Transactional
     public ItemDTO updateItem(int itemId, Item updatedItem, UserRole userRole) throws NoPermissionException {
         Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("Item not found"));
-        if(oldItem.getId() != updatedItem.getId() || oldItem.getBoardId()!= updatedItem.getBoardId()
-                || oldItem.getStatusId() !=updatedItem.getStatusId()){
+        if (oldItem.getId() != updatedItem.getId() || oldItem.getBoardId() != updatedItem.getBoardId()
+                || oldItem.getStatusId() != updatedItem.getStatusId()) {
             throw new IllegalArgumentException("You are trying to update invalid item");
         }
         if (userRole == UserRole.ROLE_LEADER) {
@@ -127,7 +128,7 @@ public class ItemService {
      */
     @Transactional
     public Item deleteItem(int itemId) {
-        Item item= itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found"));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found"));
         itemRepository.deleteById(itemId);
         return item;
     }
@@ -150,7 +151,7 @@ public class ItemService {
                 .filter(u -> u.getId() == userId)
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("user not found"));
 
-        Comment toSave = Comment.createComment(user.getUsername(),comment.getContent());
+        Comment toSave = Comment.createComment(user.getUsername(), comment.getContent());
         toSave.setItem(item);
         item.getComments().add(toSave);
         return ItemDTO.createItemDTO(itemRepository.save(item));
@@ -160,23 +161,23 @@ public class ItemService {
     /**
      * @param boardId    to find the board.
      * @param itemId     to found the item.
-     * @param taskStatus the new one, with the new name and old id.
+//     * @param taskStatus the new one, with the new name and old id.
      * @return get taskStatus and update him on the board he found.
      */
     @Transactional
-    public ItemDTO  updateItemStatusToBoard(int boardId, int itemId, TaskStatus newStatus, TaskStatus oldStatus) {
+    public ItemDTO updateItemStatusToBoard(int boardId, int itemId, TaskStatus newStatus, TaskStatus oldStatus) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("board not found"));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new IllegalArgumentException("item not found"));
 
         Set<TaskStatus> result = board.getStatues();
-        if(!result.contains(newStatus) || !result.contains(oldStatus)) {
+        if (!result.contains(newStatus) || !result.contains(oldStatus)) {
             throw new IllegalArgumentException("STATUS NOT FOUND");
-        }else if (oldStatus.getId() != item.getStatusId()){
+        } else if (oldStatus.getId() != item.getStatusId()) {
             throw new IllegalArgumentException("this item is not part of this status");
         }
 
         item.setStatusId(newStatus.getId());
 
-        return  ItemDTO.createItemDTO(itemRepository.save(item));
+        return ItemDTO.createItemDTO(itemRepository.save(item));
     }
 }

@@ -42,13 +42,14 @@ public class AuthController {
 
 
     /**
-     * method for log in
+     * login request passes through this rout , if it went well , it will return user token & and userDTO
+     *
      * @param credentials this is the LoginRequest details
      * @return details if success
      */
     @PostMapping(value = "/login_User", consumes = "application/json", produces = "application/json")
     public ResponseEntity<LoginData> login(@RequestBody LoginRequest credentials) {
-        if(!Validations.isEmailRegexValid(credentials.getEmail())){
+        if (!Validations.isEmailRegexValid(credentials.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid email");
         }
 
@@ -67,7 +68,9 @@ public class AuthController {
     }
 
     /**
-     * create user
+     * Create user pass though this rout , user sends email , password and username ,
+     * if validations for his inputs passed well , his data will be saved in the DB .
+     *
      * @param user details
      * @return ok if success
      */
@@ -82,30 +85,32 @@ public class AuthController {
 
 
     /**
+     * it gets a validation code from GitHub , and it returns user UserDTO , such as a way to make signin .
+     *
      * @param code from the frontend, take this code and get the details from gitHub
      * @return details of the user from gitHub
      */
-    @RequestMapping(method = RequestMethod.GET, path = "/allDetails",produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET, path = "/allDetails", produces = "application/json")
     public ResponseEntity<LoginData> OAuth2Request(@RequestParam String code) {
         String gitToken = gitService.getTokenFromCode(code);
         GitUser result = gitService.getDetailsFromToken(gitToken);
 
-        if(result == null || result.getEmail() ==null){
+        if (result == null || result.getEmail() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request to github");
         }
         User user = new User();
         user.setEmail(result.getEmail());
         user.setUsername(result.getName());
         String userName = result.getName();
-        if(userName!=null){
+        if (userName != null) {
             user.setUsername(result.getName());
-        }else{
+        } else {
             System.out.println(result.getEmail().split("@")[0]);
             user.setUsername(result.getEmail().split("@")[0]);
         }
         UserDTO userDTO = authService.signUpGitUser(user);
         try {
-            LoginData loginData=new LoginData(userDTO, jWTTokenHelper.generateToken(userDTO.getEmail()));
+            LoginData loginData = new LoginData(userDTO, jWTTokenHelper.generateToken(userDTO.getEmail()));
             System.out.println(loginData.getUserDTO());
             return new ResponseEntity<>(loginData, HttpStatus.OK);
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
