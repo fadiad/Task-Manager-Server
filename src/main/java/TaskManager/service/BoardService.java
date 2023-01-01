@@ -89,13 +89,13 @@ public class BoardService {
             throw new IllegalArgumentException("this user not on board");
         }
 
-        List<UserDTO> useresOnBoard = board.getUsersOnBoard().stream().map(UserDTO::new).collect(Collectors.toList());
+        List<UserDTO> usersOnBoard = board.getUsersOnBoard().stream().map(UserDTO::new).collect(Collectors.toList());
 
         List<Item> allItemsByBoardId = itemRepository.findByBoardId(boardId);
 
         Map<Integer, List<ItemDTO>> itemFilteredByStatus = board.getStatues().stream().collect(Collectors.toMap(TaskStatus::getId, taskStatus -> filterItemsByStatus(taskStatus.getId(), allItemsByBoardId)));
 
-        return new BoardDetailsDTO(board, itemFilteredByStatus, useresOnBoard);
+        return new BoardDetailsDTO(board, itemFilteredByStatus, usersOnBoard);
     }
 
     /**
@@ -105,6 +105,7 @@ public class BoardService {
      * @param allItems list of all items.
      * @return list of items in status x.
      */
+    @Transactional
     private List<ItemDTO> filterItemsByStatus(int statusId, List<Item> allItems) {
         return allItems.stream().filter(item -> item.getStatusId() == statusId).map(ItemDTO::createItemDTO).collect(Collectors.toList());
     }

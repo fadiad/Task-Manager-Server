@@ -29,9 +29,9 @@ public class Comment {
     @JoinColumn(name = "item_fk")
     private Item item;
 
-    public static Comment createComment(String username) {
+    public static Comment createComment(String username,String content) {
         Comment comment = new Comment();
-
+        comment.setContent(content);
         comment.setUsername(username);
         comment.setDate(LocalDate.now());
         comment.setTime(LocalTime.now());

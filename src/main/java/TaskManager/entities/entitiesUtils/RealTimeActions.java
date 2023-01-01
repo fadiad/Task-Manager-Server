@@ -14,5 +14,6 @@ public enum RealTimeActions {
 
     UPDATE_ITEM_DATA,
     ITEM_ASSIGNED_TO_ME,
+    ADD_COMMENT
 
 }

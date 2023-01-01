@@ -44,7 +44,7 @@ public class Board {
     @ManyToMany(mappedBy = "boards", fetch = FetchType.LAZY)
     private Set<User> usersOnBoard = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "board",fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TaskStatus> statues=new HashSet<>();
 
 
